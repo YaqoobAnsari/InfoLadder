@@ -1,0 +1,26 @@
+# Instrument calibration on the six-tier T-ladder (D-014 P-4; paper Figure 2).
+# Six planted targets, one per tier, + two shuffled controls. PASS required
+# before any tier claim. V6 sweep runs as a separate follow-up config (CPU cost).
+# This config is immutable once a registered run has used it (results/CLAUDE.md).
+experiment: calibration_a0
+seed: 20260714
+device: cpu
+
+n_buildings: 60
+levels: [0, 1, 2, 3, 4, 5]
+targets:
+  - planted_degree
+  - planted_label
+  - planted_door
+  - planted_attr
+  - planted_delta
+  - planted_zone
+  - planted_door_ctrl
+  - planted_zone_ctrl
+families: [V1, V2, V3, V4, V5]   # V0 auto-added where a readout exists (zone@T5)
+seeds: [0, 1, 2]
+n_restarts: 3
+mdl: true
+
+margin_nats: 0.1
+ctrl_tol_nats: 0.05
