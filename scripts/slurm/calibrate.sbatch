@@ -6,9 +6,10 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=64G
 #SBATCH --time=12:00:00
+#SBATCH --mcs-label=morshed
 #SBATCH --output=runs/slurm-%j.out
 # Full Phase A0 calibration (ROADMAP A0-2). CPU-only: probes V1-V5 need no GPU.
-# Submit from the repo root on the login node:  sbatch --mcs-label=$USER scripts/slurm/calibrate.sbatch
+# Submit from the repo root on the login node:  sbatch --mcs-label=morshed scripts/slurm/calibrate.sbatch
 set -euo pipefail
 cd /data1/yansari/PhD/topofield/spectrum
 export SLURM_RUN=1

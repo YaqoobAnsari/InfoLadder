@@ -24,7 +24,7 @@ All python runs use `/data1/yansari/.conda/envs/topofield/bin/python` (the `topo
 conda env). The Makefile enforces this; never use the system python.
 
 **Compute:** this repo lives on the deepnet login node — no job runs there. All
-experiments go through slurm (`sbatch --mcs-label=$USER`, templates in
+experiments go through slurm (`sbatch --mcs-label=morshed`, templates in
 `scripts/slurm/`); see `docs/CLUSTER.md` for the partition/GPU map.
 
 ## Repository layout

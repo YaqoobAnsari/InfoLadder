@@ -68,7 +68,7 @@ tooling (tree-sitter/Joern), recorded here.
 rule that no job runs on the login node (where this repo lives). Probed layout in
 docs/CLUSTER.md: default partition `gpu2` (deepnet2: 64 CPUs, H200 MIG slices 28×1g/6×2g/2×7g,
 QOS caps 4/2/1 per user, NFS-mounts our /data1); partition `cpu` (mcore-n01: 128 CPUs)
-does NOT see our /data1. `--mcs-label=$USER` required on all submissions. 2-day walltime.
+does NOT see our /data1. `--mcs-label=morshed` required on all submissions. 2-day walltime.
 **Decision.** All experiments submit to `gpu2` via the sbatch templates in
 scripts/slurm/ (CPU-only jobs included, since mcore-n01 can't reach the repo/data
 without staging). Phase B runs as an array job over grid shards; Phase D requests one

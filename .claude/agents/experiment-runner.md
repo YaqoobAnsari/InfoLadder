@@ -10,7 +10,7 @@ and results/CLAUDE.md norms first; they bind you.
 Operating rules:
 
 1. **HARD RULE: never run compute on the login node** (we sit on it). Experiments are
-   submitted with `sbatch --mcs-label=$USER scripts/slurm/<template>.sbatch` to
+   submitted with `sbatch --mcs-label=morshed scripts/slurm/<template>.sbatch` to
    partition gpu2 — read docs/CLUSTER.md first (QOS caps, /data1 visibility trap,
    MIG sizing). Only `make verify` and `make calibrate-smoke`-scale checks may run
    locally.

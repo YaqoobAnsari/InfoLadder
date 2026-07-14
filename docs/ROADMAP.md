@@ -14,7 +14,7 @@ and the STATUS block as work completes. Task IDs are referenced from code
 - **Blockers:** institutional building sources for Gate-b / InstBuild (open question
   §14.1); annotator availability (§14.3). ~~GPU access~~ resolved: slurm on deepnet
   (docs/CLUSTER.md); grid runner needs `--shard N/M` before B-3.
-- **Compute rule:** all experiments via `sbatch --mcs-label=$USER` on partition gpu2 —
+- **Compute rule:** all experiments via `sbatch --mcs-label=morshed` on partition gpu2 —
   NEVER on the login node (docs/CLUSTER.md).
 - **Last updated:** 2026-07-14 (repo scaffolded, env installed, core package + tests
   live, slurm probed, GitHub remote InfoLadder)

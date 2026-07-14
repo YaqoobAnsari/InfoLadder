@@ -16,7 +16,7 @@ is submitted via `sbatch` (templates in `scripts/slurm/`).
 
 - **Walltime limit:** 2 days on both partitions.
 - **Per-user GPU QOS caps** (`max_jobs_qos`): 4× 1g.18gb, 2× 2g.35gb, 1× 7g.141gb.
-- **`--mcs-label=$USER` is REQUIRED** on every submission or allocation fails with
+- **`--mcs-label=morshed` is REQUIRED** on every submission or allocation fails with
   "Please include --mcs-label in your job".
 
 ## Consequences for this project
@@ -46,5 +46,5 @@ is submitted via `sbatch` (templates in `scripts/slurm/`).
 sbatch scripts/slurm/calibrate.sbatch     squeue -u $USER
 sbatch scripts/slurm/verify.sbatch        sacct -j <jobid> --format=JobID,State,Elapsed,MaxRSS
 # interactive debugging shell on the compute node (still not the login node!)
-srun -p gpu2 -n1 -c4 -t 02:00:00 --mcs-label=$USER --pty bash
+srun -p gpu2 -n1 -c4 -t 02:00:00 --mcs-label=morshed --pty bash
 ```

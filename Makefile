@@ -28,16 +28,16 @@ calibrate-smoke:  ## tiny end-to-end Phase A0 run (~1 min) — pipeline liveness
 # HARD RULE (docs/CLUSTER.md): real experiments never run on the login node.
 # These targets SUBMIT slurm jobs; monitor with `squeue -u $$USER`.
 calibrate:        ## full Phase A0 calibration — submits to slurm
-	sbatch --mcs-label=$$USER scripts/slurm/calibrate.sbatch
+	sbatch --mcs-label=morshed scripts/slurm/calibrate.sbatch
 
 verify-cluster:   ## full test suite incl. slow tests, on a compute node
-	sbatch --mcs-label=$$USER scripts/slurm/verify.sbatch
+	sbatch --mcs-label=morshed scripts/slurm/verify.sbatch
 
 gate:             ## Week-1 Gate experiments (requires data; see docs/ROADMAP.md)
 	@echo "Gate runner not implemented yet (ROADMAP G-*); will submit via scripts/slurm/ when ready" && exit 1
 
 grid:             ## Phase B probing grid — submits array job (requires corpus + labels)
-	sbatch --mcs-label=$$USER scripts/slurm/grid_array.sbatch
+	sbatch --mcs-label=morshed scripts/slurm/grid_array.sbatch
 
 clean:
 	rm -rf .pytest_cache .ruff_cache src/*.egg-info

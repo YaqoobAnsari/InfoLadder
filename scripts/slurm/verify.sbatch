@@ -6,6 +6,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --time=01:00:00
+#SBATCH --mcs-label=morshed
 #SBATCH --output=runs/slurm-%j.out
 # Full test suite including slow tests, off the login node.
 set -euo pipefail

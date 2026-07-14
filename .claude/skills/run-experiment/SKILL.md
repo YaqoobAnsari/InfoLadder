@@ -11,7 +11,7 @@ description: Launch a registered T4 experiment (calibration, gate, grid) the com
 2. **Pre-flight:** `make verify` passes; `git status` clean (registered runs refuse
    dirty trees); disk space sanity (`du -sh runs/`).
 3. **Launch — via slurm, NEVER on the login node** (docs/CLUSTER.md):
-   `sbatch --mcs-label=$USER scripts/slurm/<template>.sbatch` (partition gpu2; request
+   `sbatch --mcs-label=morshed scripts/slurm/<template>.sbatch` (partition gpu2; request
    a GPU gres only for training cells). Monitor: `squeue -u $USER`, `sacct -j <jobid>`.
    The only local exception: `--smoke` liveness checks (~1 min).
 4. **Post-flight (mandatory):**

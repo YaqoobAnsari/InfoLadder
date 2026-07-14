@@ -7,6 +7,7 @@
 #SBATCH --mem=64G
 #SBATCH --gres=gpu:nvidia_h200_1g.18gb:1
 #SBATCH --time=24:00:00
+#SBATCH --mcs-label=morshed
 #SBATCH --output=runs/slurm-%j.out
 # Phase D transformer fine-tuning (ROADMAP D-2). One MIG slice fits <=8M-param models;
 # escalate to 2g.35gb only with measured memory pressure (docs/CLUSTER.md).

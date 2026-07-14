@@ -52,7 +52,7 @@ in `docs/DECISIONS.md` and surface it.
   Use `make <target>` or that absolute path; never the system python.
 - **We sit on the deepnet LOGIN NODE (no GPU, 10 cores). HARD RULE: no job runs on the
   login node.** All compute — probing grids, calibration, label generation, training,
-  dataset processing — goes through slurm (`sbatch --mcs-label=$USER`, templates in
+  dataset processing — goes through slurm (`sbatch --mcs-label=morshed`, templates in
   `scripts/slurm/`). Login-node allowance: editing, git, `sinfo`/`squeue`, and
   `make verify`-scale checks (seconds). Full cluster map, GPU QOS caps, and the
   /data1-visibility trap (cpu partition CANNOT see our /data1): **docs/CLUSTER.md**.
