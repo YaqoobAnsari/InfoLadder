@@ -10,10 +10,10 @@ description: Launch a registered T4 experiment (calibration, gate, grid) the com
    experiment-specific block (see `src/topospec/experiments/config.py` docstrings).
 2. **Pre-flight:** `make verify` passes; `git status` clean (registered runs refuse
    dirty trees); disk space sanity (`du -sh runs/`).
-3. **Launch:**
-   `/data1/yansari/.conda/envs/topofield/bin/python -m topospec.cli <calibrate|gate|grid> --config configs/<file>.yaml`
-   For anything over ~10 minutes, run under nohup in the background and monitor the log.
-   This is a 10-core CPU host — set `workers` accordingly (≤ 8, leave headroom).
+3. **Launch — via slurm, NEVER on the login node** (docs/CLUSTER.md):
+   `sbatch --mcs-label=$USER scripts/slurm/<template>.sbatch` (partition gpu2; request
+   a GPU gres only for training cells). Monitor: `squeue -u $USER`, `sacct -j <jobid>`.
+   The only local exception: `--smoke` liveness checks (~1 min).
 4. **Post-flight (mandatory):**
    - `runs/<run_id>/manifest.json` exists; git SHA and config sha256 correct.
    - `results/registry.jsonl` gained exactly the expected lines (one per run/cell batch).

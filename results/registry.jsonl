@@ -1,0 +1,1 @@
+{"calibration_pass": true, "config_sha256": "576a67a36af6d03778a80d14a49c7c2ea02dcbb8287ca8b578675f51df7ab2ac", "experiment": "calibration_a0", "git_sha": "565240926555333892174efc76aa5e26b543f3af", "n_cells": 19, "run_id": "20260714T013229Z-calibration_a0-s20260714-smoke", "seed": 20260714, "smoke": true, "status": "completed"}

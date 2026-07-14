@@ -9,10 +9,15 @@ and the STATUS block as work completes. Task IDs are referenced from code
 
 - **Current week:** W1 (2026-07-14 – 2026-07-18)
 - **Active phase(s):** INFRA (complete) → GATE + A0 + Phase A corpus derivation
-- **Gates passed:** none yet
-- **Blockers:** institutional building sources for Gate-b / InstBuild (open question §14.1);
-  annotator availability (§14.3); GPU access for Phase D (this host is CPU-only)
-- **Last updated:** 2026-07-14 (repo scaffolded, env installed, core package + tests live)
+- **Gates passed:** none yet (A0 smoke calibration PASS on 2026-07-14; full A0 pending
+  as a slurm run)
+- **Blockers:** institutional building sources for Gate-b / InstBuild (open question
+  §14.1); annotator availability (§14.3). ~~GPU access~~ resolved: slurm on deepnet
+  (docs/CLUSTER.md); grid runner needs `--shard N/M` before B-3.
+- **Compute rule:** all experiments via `sbatch --mcs-label=$USER` on partition gpu2 —
+  NEVER on the login node (docs/CLUSTER.md).
+- **Last updated:** 2026-07-14 (repo scaffolded, env installed, core package + tests
+  live, slurm probed, GitHub remote InfoLadder)
 
 ## Calendar (plan §13, anchored to 2026-07-14)
 
@@ -70,12 +75,16 @@ and the STATUS block as work completes. Task IDs are referenced from code
       `planted_tau` (readable at R2+, connectivity-invariant), `planted_delta` (R3+),
       `planted_zone` (R4 only), plus `planted_degree` (R0+ positive control).
 - [ ] A0-2 Full probing protocol on synthetic families: {R0..R4} × {4 planted targets} ×
-      {V1,V2,V4,V5} × 3 seeds, via `make calibrate`.
+      {V1,V2,V3,V4,V5} × 3 seeds, via `make calibrate` (submits slurm job).
       **Acceptance (plan §6): estimated I_V surface recovers each planted saturation
       level** — large jump exactly at the planted level, ≈flat elsewhere; shuffled
-      control ≈ 0 everywhere. This becomes paper Figure 2.
-- [ ] A0-3 Calibration report generator: `results/calibration/report.md` + figure from
-      registry; PASS/FAIL stamped. A FAIL freezes Phase B until estimator fixed.
+      control extracts nothing. This becomes paper Figure 2.
+      (Smoke variant PASSed 2026-07-14 on 12 buildings / 3 levels / V1-V2 — see
+      registry run 20260714T*-calibration_a0-s20260714-smoke.)
+- [ ] A0-3 Phase report: `results/reports/a0_calibration/report.md` + I_V-surface
+      figure (levels × targets × families) from registry; PASS/FAIL stamped. A FAIL
+      freezes Phase B until the estimator is fixed. (Standing rule: EVERY phase ends
+      with such a report — results/CLAUDE.md §5.)
 
 ## Phase A (W1–3) — corpus + labels
 

@@ -13,15 +13,21 @@ in `docs/DECISIONS.md` and surface it.
 
 ## Mission priorities (in order)
 
-1. **Accuracy over speed.** Never trade correctness of an estimate, label, or statistic
-   for wall-clock time. If a shortcut is unavoidable, it must be recorded in
-   `docs/DECISIONS.md` with its consequences and a follow-up task in `docs/ROADMAP.md`.
+1. **Accuracy over speed; completeness over rash decisions.** Never trade correctness
+   of an estimate, label, or statistic for wall-clock time. Prefer the holistic,
+   well-considered route: when options exist (datasets, solvers, probe designs),
+   explore and document the range before committing. Unavoidable shortcuts are
+   recorded in `docs/DECISIONS.md` with consequences + a follow-up ROADMAP task.
 2. **Comprehensiveness.** The deliverable is the FULL grid: all 5 levels × all targets ×
    all probe families × 3 seeds, with all baselines (controls, oracle skylines,
    betweenness reference) and all metrics (I_V, MDL codelength, task-native secondaries).
    Partial grids are intermediate states, never endpoints. If a cell is dropped, that is
    a scope decision the user must make — flag it, don't silently skip.
-3. **External accountability.** All code and results are externally monitored and graded
+3. **Neat, visual documentation of results.** Every experiment phase ends with a
+   written report + figures (curves, surfaces, tables) generated from the registry —
+   under `results/reports/<phase>/`. Numbers without a plot and a paragraph of
+   interpretation are unfinished work.
+4. **External accountability.** All code and results are externally monitored and graded
    (independent review by Codex). Assume every number will be re-derived from artifacts
    and every line of code adversarially read. Reputation rides on reproducibility.
 
@@ -44,13 +50,18 @@ in `docs/DECISIONS.md` and surface it.
 
 - Conda env: **topofield** — `/data1/yansari/.conda/envs/topofield/bin/python` (3.10).
   Use `make <target>` or that absolute path; never the system python.
-- **This host has NO GPU** (10 CPU cores, 46 GB RAM). Probes V0–V5 are CPU-fine. Budget
-  V6/Phase-D transformer runs accordingly (small models, patience) or stage them for a
-  GPU host; keep all code device-agnostic (`torch.device` from config, default cpu).
-- Internet available. Datasets are large — download into `data/raw/` only (gitignored),
-  per `docs/DATA.md`.
-- Long runs: launch via `nohup`/background with output to `runs/<run_id>/log.txt`, never
-  blocking an interactive session.
+- **We sit on the deepnet LOGIN NODE (no GPU, 10 cores). HARD RULE: no job runs on the
+  login node.** All compute — probing grids, calibration, label generation, training,
+  dataset processing — goes through slurm (`sbatch --mcs-label=$USER`, templates in
+  `scripts/slurm/`). Login-node allowance: editing, git, `sinfo`/`squeue`, and
+  `make verify`-scale checks (seconds). Full cluster map, GPU QOS caps, and the
+  /data1-visibility trap (cpu partition CANNOT see our /data1): **docs/CLUSTER.md**.
+- Keep all code device-agnostic (`torch.device` from config; probes are CPU-fine, Phase
+  D uses an H200 MIG slice).
+- Internet available on the login node. Datasets download into `data/raw/` only
+  (gitignored), per `docs/DATA.md`.
+- GitHub remote: https://github.com/YaqoobAnsari/InfoLadder (project working name:
+  **InfoLadder**; package name stays `topospec`).
 
 ## Commands
 

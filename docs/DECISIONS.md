@@ -61,3 +61,24 @@ auto-derivable AST→+dataflow→+call ladder.
 default candidate; final pick at A2-1 after checking ladder derivability with available
 tooling (tree-sitter/Joern), recorded here.
 **Consequences.** None yet; hard cap (one task/figure/person-week) unchanged.
+
+## 2026-07-14 — D-006: Compute goes through slurm on deepnet; login node is compute-free (supersedes D-003)
+
+**Context.** User directive: full GPU/CPU suite available via slurm ("deepnet"); hard
+rule that no job runs on the login node (where this repo lives). Probed layout in
+docs/CLUSTER.md: default partition `gpu2` (deepnet2: 64 CPUs, H200 MIG slices 28×1g/6×2g/2×7g,
+QOS caps 4/2/1 per user, NFS-mounts our /data1); partition `cpu` (mcore-n01: 128 CPUs)
+does NOT see our /data1. `--mcs-label=$USER` required on all submissions. 2-day walltime.
+**Decision.** All experiments submit to `gpu2` via the sbatch templates in
+scripts/slurm/ (CPU-only jobs included, since mcore-n01 can't reach the repo/data
+without staging). Phase B runs as an array job over grid shards; Phase D requests one
+1g.18gb MIG slice per run. The login node keeps only edit/git/queries/`make verify`.
+**Consequences.** D-003's CPU-only constraint is void — Phase D is unblocked. The grid
+runner must grow a `--shard N/M` flag before B-3 (added to task text). If Phase B ever
+needs mcore-n01's 128 CPUs, write a staging script + new DECISIONS entry.
+
+## 2026-07-14 — D-007: Project working name "InfoLadder"; package name stays topospec
+
+**Context.** GitHub repo created as YaqoobAnsari/InfoLadder ("tentative name").
+**Decision.** Repo/paper working name InfoLadder; the Python package remains
+`topospec` until the name is final (rename is cheap and mechanical; churn now is not).

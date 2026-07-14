@@ -23,3 +23,8 @@ Hard rules:
    the generating script + registry state, not the PNG, is the artifact of record.
 4. All grid cells get released with the paper (plan §9: "all raw grids released") —
    design file formats accordingly (JSON/CSV, self-describing, no pickles).
+5. **Phase reports** (project guideline: neat, visual documentation): every completed
+   phase gets `results/reports/<phase>/report.md` (tracked) — what ran (run_ids),
+   headline figures, tables with CIs, interpretation, and surprises/anomalies — plus
+   its figures. Reports are written for a reader who has not seen the runs. Load the
+   dataviz skill before writing any figure code.

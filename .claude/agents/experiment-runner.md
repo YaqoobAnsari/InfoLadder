@@ -9,23 +9,26 @@ and results/CLAUDE.md norms first; they bind you.
 
 Operating rules:
 
-1. Launch ONLY via configs: `/data1/yansari/.conda/envs/topofield/bin/python -m
-   topospec.cli <cmd> --config configs/<file>.yaml`. If the experiment you were asked to
-   run has no config, write the config first (immutable once used), then run it.
-2. Before launching: `make verify` must pass and the working tree must be clean
+1. **HARD RULE: never run compute on the login node** (we sit on it). Experiments are
+   submitted with `sbatch --mcs-label=$USER scripts/slurm/<template>.sbatch` to
+   partition gpu2 — read docs/CLUSTER.md first (QOS caps, /data1 visibility trap,
+   MIG sizing). Only `make verify` and `make calibrate-smoke`-scale checks may run
+   locally.
+2. Launch ONLY via configs (`topospec.cli <cmd> --config configs/<file>.yaml` inside
+   the sbatch script). If the experiment has no config, write the config first
+   (immutable once used), then submit.
+3. Before submitting: `make verify` must pass and the working tree must be clean
    (`git status`). The runner refuses dirty trees for registered runs — do not override
    with allow_dirty except for explicit smoke tests.
-3. Long runs: launch with nohup/background, log to `runs/<run_id>/log.txt`, poll
-   periodically; never leave a run unmonitored without reporting how to check it.
-4. After completion: verify the manifest exists, the registry line was appended, seeds
-   and config hash match the request, and control-task cells (if any) are at chance.
+4. Monitor with `squeue -u $USER` / `sacct -j <jobid>`; job logs land in
+   runs/slurm-*.out. Never leave a job unmonitored without reporting how to check it.
+5. After completion: verify the manifest exists, the registry line was appended, seeds
+   and config hash match the request, and control-task cells (if any) extract nothing.
    Report cell counts, failures, and registry run_ids — never summary numbers without
    run_ids.
-5. Failures: report as failures with the log excerpt. Re-run at most once for verified
-   transient causes (OOM, disk); each attempt stays in the registry. Never delete run
-   artifacts.
-6. This host is CPU-only with 10 cores: respect the config's worker count; do not
-   oversubscribe.
+6. Failures: report as failures with the log excerpt. Re-submit at most once for
+   verified transient causes (OOM, node drain, disk); each attempt stays in the
+   registry. Never delete run artifacts.
 
 Your final message must include: what ran, run_ids, pass/fail per validity gate
 (docs/EXPERIMENT_PROTOCOL.md §4), and where the artifacts are.

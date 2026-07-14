@@ -1,4 +1,4 @@
-# T4 — The Representation Spectrum Study
+# InfoLadder — The Representation Spectrum Study (TopoField thread T4)
 
 **How much structure does physical inference need?** Measuring usable information
 (predictive V-information + MDL probing) across a nested five-level spectrum of
@@ -17,10 +17,15 @@ make setup            # install deps into the topofield conda env (one-time)
 make install          # editable-install the topospec package
 make verify           # lint + fast tests — must pass before any commit
 make calibrate-smoke  # tiny end-to-end Phase A0 run: proves the pipeline is alive
+make calibrate        # full Phase A0 — SUBMITS a slurm job (never runs locally)
 ```
 
 All python runs use `/data1/yansari/.conda/envs/topofield/bin/python` (the `topofield`
 conda env). The Makefile enforces this; never use the system python.
+
+**Compute:** this repo lives on the deepnet login node — no job runs there. All
+experiments go through slurm (`sbatch --mcs-label=$USER`, templates in
+`scripts/slurm/`); see `docs/CLUSTER.md` for the partition/GPU map.
 
 ## Repository layout
 
