@@ -1,0 +1,114 @@
+{
+ "schema_version": "2.0.0",
+ "level": 2,
+ "building_id": "prelim:FF_part_5up",
+ "nodes": [
+  {
+   "id": "c000",
+   "kind": "corridor",
+   "area": null,
+   "centroid": [
+    920.0,
+    40.0
+   ],
+   "label": "corridor",
+   "attrs": {}
+  },
+  {
+   "id": "c001",
+   "kind": "corridor",
+   "area": null,
+   "centroid": [
+    377.14285714285717,
+    309.42857142857144
+   ],
+   "label": "corridor",
+   "attrs": {}
+  },
+  {
+   "id": "room_1",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    313.70050793650796,
+    124.02895238095238
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_2",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    72.0,
+    203.0
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_4",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    871.0984832608582,
+    241.28743385550374
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_5",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    317.8322666921387,
+    546.1367211131277
+   ],
+   "label": null,
+   "attrs": {}
+  }
+ ],
+ "edges": [
+  {
+   "u": "c000",
+   "v": "room_4",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "room_1",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "room_2",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "room_4",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "room_5",
+   "delta": null
+  }
+ ],
+ "containment": {},
+ "meta": {
+  "source": "topospec.data.tesseract",
+  "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/FF part 5up/FF part 5up_post_pruning.json",
+  "units": "image pixels",
+  "n_rooms": 4,
+  "n_corridor_components": 2,
+  "n_transitions": 0,
+  "n_doors": 0,
+  "n_exit_doors": 0,
+  "n_subnodes_contracted": 27,
+  "n_outside_dropped": 0
+ }
+}

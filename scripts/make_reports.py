@@ -118,7 +118,8 @@ def main() -> None:
         print(f"a0_calibration: report written -> {path} (from {run.name})")
     else:
         print("a0_calibration: no completed run found — skipped")
-    data0_report()
+    # data0_report() retired: superseded by results/corpora (D-014;
+    # scripts/build_corpus_results.py)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,66 @@
+{
+ "schema_version": "2.0.0",
+ "level": 0,
+ "building_id": "prelim:file_10",
+ "nodes": [
+  {
+   "id": "c000",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    270.0,
+    386.0
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_1",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    542.0,
+    433.0
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_2",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    113.0,
+    452.0
+   ],
+   "label": null,
+   "attrs": {}
+  }
+ ],
+ "edges": [
+  {
+   "u": "c000",
+   "v": "room_1",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_2",
+   "delta": null
+  }
+ ],
+ "containment": {},
+ "meta": {
+  "source": "topospec.data.tesseract",
+  "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/file_10/file_10_post_pruning.json",
+  "units": "image pixels",
+  "n_rooms": 2,
+  "n_corridor_components": 1,
+  "n_transitions": 0,
+  "n_doors": 2,
+  "n_exit_doors": 0,
+  "n_subnodes_contracted": 0,
+  "n_outside_dropped": 0
+ }
+}

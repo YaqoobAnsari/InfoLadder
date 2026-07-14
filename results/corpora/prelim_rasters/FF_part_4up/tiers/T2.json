@@ -1,0 +1,578 @@
+{
+ "schema_version": "2.0.0",
+ "level": 2,
+ "building_id": "prelim:FF_part_4up",
+ "nodes": [
+  {
+   "id": "c000",
+   "kind": "corridor",
+   "area": null,
+   "centroid": [
+    843.2466666666667,
+    581.6386666666667
+   ],
+   "label": "corridor",
+   "attrs": {}
+  },
+  {
+   "id": "c001",
+   "kind": "corridor",
+   "area": null,
+   "centroid": [
+    199.4,
+    366.25
+   ],
+   "label": "corridor",
+   "attrs": {}
+  },
+  {
+   "id": "c2c_door_1",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    422.0,
+    291.0
+   ],
+   "label": "corridor-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "c2c_door_3",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    316.0,
+    429.0
+   ],
+   "label": "corridor-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "c2c_door_5",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    568.0,
+    564.0
+   ],
+   "label": "corridor-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "c2c_door_6",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    510.0,
+    552.0
+   ],
+   "label": "corridor-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "exit_door_1",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    32.0,
+    362.0
+   ],
+   "label": "exit door",
+   "attrs": {}
+  },
+  {
+   "id": "exit_door_2",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    725.0,
+    1109.0
+   ],
+   "label": "exit door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_1",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    418.0,
+    215.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_10",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    1165.0,
+    929.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_11",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    1227.0,
+    1004.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_2",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    650.0,
+    44.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_3",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    723.0,
+    127.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_4",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    727.0,
+    280.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_5",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    389.0,
+    419.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_6",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    668.0,
+    369.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_7",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    504.0,
+    655.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_8",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    968.0,
+    597.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_9",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    1010.0,
+    686.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "room_1",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    792.4487598800763,
+    103.37544289997274
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_10",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    922.3343733404142,
+    704.6951009028146
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_12",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    968.4116587740946,
+    796.0126725805376
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_13",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    1022.1134251631187,
+    882.7623410004613
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_14",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    388.2480323039266,
+    891.3983466955897
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_15",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    1081.9305435433437,
+    965.6085423458186
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_16",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    1148.5364194677409,
+    1042.9056329657267
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_18",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    1204.6565225818956,
+    1118.2014925373135
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_2",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    562.263794317915,
+    104.0422047428974
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_3",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    230.7759382486026,
+    170.68654067962026
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_4",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    790.8749818287541,
+    318.29313853757816
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_5",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    557.2103382778582,
+    307.6188947178003
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_6",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    367.16703104503716,
+    391.14473108876257
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_7",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    151.65952380952382,
+    416.28333333333336
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_8",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    850.5085791048422,
+    509.78689625694574
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_9",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    883.2060546232314,
+    610.0285620269825
+   ],
+   "label": null,
+   "attrs": {}
+  }
+ ],
+ "edges": [
+  {
+   "u": "c000",
+   "v": "c2c_door_1",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "c2c_door_3",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "c2c_door_5",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "c2c_door_6",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "exit_door_2",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_1",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_10",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_11",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_2",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_3",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_4",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_5",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_6",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_7",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_8",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_9",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_12",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_13",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_18",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_8",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "c2c_door_3",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "exit_door_1",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "room_7",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_1",
+   "v": "room_3",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_10",
+   "v": "room_15",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_11",
+   "v": "room_16",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_2",
+   "v": "room_2",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_3",
+   "v": "room_1",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_4",
+   "v": "room_4",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_5",
+   "v": "room_6",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_6",
+   "v": "room_5",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_7",
+   "v": "room_14",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_8",
+   "v": "room_9",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_9",
+   "v": "room_10",
+   "delta": null
+  }
+ ],
+ "containment": {},
+ "meta": {
+  "source": "topospec.data.tesseract",
+  "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/FF part 4up/FF part 4up_post_pruning.json",
+  "units": "image pixels",
+  "n_rooms": 16,
+  "n_corridor_components": 2,
+  "n_transitions": 0,
+  "n_doors": 17,
+  "n_exit_doors": 0,
+  "n_subnodes_contracted": 70,
+  "n_outside_dropped": 0
+ }
+}

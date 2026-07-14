@@ -8,6 +8,7 @@ Model_weights relative to os.getcwd()) finds them when launched from repo root.
 Login-node safe: this is network I/O only, no model inference.
 """
 import os
+
 from huggingface_hub import hf_hub_download
 
 REPO_ROOT = "/data1/yansari/PhD/topofield/Tesseract2"

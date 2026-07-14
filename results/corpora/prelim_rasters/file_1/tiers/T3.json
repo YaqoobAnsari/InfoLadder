@@ -1,0 +1,164 @@
+{
+ "schema_version": "2.0.0",
+ "level": 3,
+ "building_id": "prelim:file_1",
+ "nodes": [
+  {
+   "id": "c000",
+   "kind": "corridor",
+   "area": null,
+   "centroid": [
+    334.44444444444446,
+    183.33333333333334
+   ],
+   "label": "corridor",
+   "attrs": {
+    "n_subnodes": 18,
+    "n_doors": 4
+   }
+  },
+  {
+   "id": "exit_door_1",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    482.0,
+    236.0
+   ],
+   "label": "exit door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_1",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    229.0,
+    233.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_2",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    209.0,
+    143.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_3",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    307.0,
+    146.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "room_1",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    116.0,
+    77.0
+   ],
+   "label": null,
+   "attrs": {
+    "eq_radius": 0.0,
+    "inradius": 0.0,
+    "n_subnodes": 0,
+    "n_doors": 1
+   }
+  },
+  {
+   "id": "room_2",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    306.0,
+    88.0
+   ],
+   "label": null,
+   "attrs": {
+    "eq_radius": 0.0,
+    "inradius": 0.0,
+    "n_subnodes": 0,
+    "n_doors": 1
+   }
+  },
+  {
+   "id": "room_3",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    263.0,
+    313.0
+   ],
+   "label": null,
+   "attrs": {
+    "eq_radius": 0.0,
+    "inradius": 0.0,
+    "n_subnodes": 0,
+    "n_doors": 1
+   }
+  }
+ ],
+ "edges": [
+  {
+   "u": "c000",
+   "v": "exit_door_1",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_1",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_2",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_3",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_1",
+   "v": "room_3",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_2",
+   "v": "room_1",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_3",
+   "v": "room_2",
+   "delta": null
+  }
+ ],
+ "containment": {},
+ "meta": {
+  "source": "topospec.data.tesseract",
+  "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/file_1/file_1_post_pruning.json",
+  "units": "image pixels",
+  "n_rooms": 3,
+  "n_corridor_components": 1,
+  "n_transitions": 0,
+  "n_doors": 4,
+  "n_exit_doors": 0,
+  "n_subnodes_contracted": 0,
+  "n_outside_dropped": 0
+ }
+}

@@ -1,0 +1,706 @@
+{
+ "schema_version": "2.0.0",
+ "level": 0,
+ "building_id": "prelim:FF_part_2up",
+ "nodes": [
+  {
+   "id": "c000",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1467.5925925925926,
+    284.0740740740741
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "c001",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    518.3448275862069,
+    537.4137931034483
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "c002",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    476.5,
+    340.8333333333333
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "c003",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1404.5217391304348,
+    646.9565217391304
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "c004",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    315.0,
+    610.0
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "c005",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    580.0,
+    620.0
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "c006",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    713.1073446327683,
+    1007.909604519774
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "c007",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    620.0,
+    260.0
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_1",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1459.9703389830509,
+    59.13761974944731
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_10",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    286.37150520156047,
+    327.9658918508886
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_11",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    812.6477766346593,
+    393.1321159122085
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_12",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1299.733249646948,
+    404.10670014122076
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_13",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    590.3442930953499,
+    416.2353217472992
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_14",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1292.5750888807158,
+    482.5976461934535
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_15",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    319.19418904008825,
+    486.23023170283193
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_16",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1542.3886559258442,
+    485.73273008165967
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_17",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    225.3693786474425,
+    505.8925506350841
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_18",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1259.6505859375,
+    566.66328125
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_19",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1542.6097496706193,
+    571.9573122529645
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_2",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1526.7619996377468,
+    58.91903640644811
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_20",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    762.8671113934773,
+    607.8378864887759
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_21",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    637.0,
+    619.0
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_22",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    281.0,
+    607.0
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_23",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1252.470834029751,
+    647.0080227310714
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_24",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1542.318193416688,
+    652.057157438122
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_25",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1245.9198173776574,
+    725.793979169639
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_26",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1436.135632183908,
+    737.3719759168035
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_27",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1542.6452590959207,
+    733.3927783902977
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_28",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    910.8206485921414,
+    743.4703315683022
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_29",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    279.2365499240329,
+    792.0164400638903
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_3",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1393.339660521993,
+    59.110969154955285
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_30",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1238.785642946317,
+    806.0712858926343
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_31",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    714.6962471518564,
+    819.1048518965287
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_32",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    194.08044135967253,
+    926.9410927211247
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_33",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1256.0381847914964,
+    917.1285363859362
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_34",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    332.041015625,
+    910.58984375
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_35",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    82.86314213677908,
+    940.7334541443429
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_4",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1580.0906854130053,
+    126.74130052724077
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_5",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1321.9818887451488,
+    130.46808969383355
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_6",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    673.9103921096945,
+    152.99272311763292
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_7",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1314.8276301130034,
+    236.5543530160751
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_8",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1085.7692102657832,
+    228.76814408651282
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_9",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    1306.025394045534,
+    326.6245183887916
+   ],
+   "label": null,
+   "attrs": {}
+  }
+ ],
+ "edges": [
+  {
+   "u": "c000",
+   "v": "c003",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_1",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_12",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_16",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_2",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_3",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_4",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_5",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_7",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_8",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_9",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "c002",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "c004",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "c006",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "room_10",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "room_11",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "room_13",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "room_20",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "room_31",
+   "delta": null
+  },
+  {
+   "u": "c001",
+   "v": "room_6",
+   "delta": null
+  },
+  {
+   "u": "c003",
+   "v": "c006",
+   "delta": null
+  },
+  {
+   "u": "c003",
+   "v": "room_14",
+   "delta": null
+  },
+  {
+   "u": "c003",
+   "v": "room_18",
+   "delta": null
+  },
+  {
+   "u": "c003",
+   "v": "room_19",
+   "delta": null
+  },
+  {
+   "u": "c003",
+   "v": "room_23",
+   "delta": null
+  },
+  {
+   "u": "c003",
+   "v": "room_24",
+   "delta": null
+  },
+  {
+   "u": "c003",
+   "v": "room_25",
+   "delta": null
+  },
+  {
+   "u": "c003",
+   "v": "room_26",
+   "delta": null
+  },
+  {
+   "u": "c003",
+   "v": "room_27",
+   "delta": null
+  },
+  {
+   "u": "c003",
+   "v": "room_30",
+   "delta": null
+  },
+  {
+   "u": "c003",
+   "v": "room_33",
+   "delta": null
+  },
+  {
+   "u": "c004",
+   "v": "room_15",
+   "delta": null
+  },
+  {
+   "u": "c004",
+   "v": "room_17",
+   "delta": null
+  },
+  {
+   "u": "c004",
+   "v": "room_22",
+   "delta": null
+  },
+  {
+   "u": "c005",
+   "v": "room_21",
+   "delta": null
+  },
+  {
+   "u": "c006",
+   "v": "room_28",
+   "delta": null
+  },
+  {
+   "u": "c006",
+   "v": "room_29",
+   "delta": null
+  },
+  {
+   "u": "c006",
+   "v": "room_32",
+   "delta": null
+  },
+  {
+   "u": "c006",
+   "v": "room_34",
+   "delta": null
+  },
+  {
+   "u": "c006",
+   "v": "room_35",
+   "delta": null
+  },
+  {
+   "u": "c007",
+   "v": "room_6",
+   "delta": null
+  },
+  {
+   "u": "room_17",
+   "v": "room_22",
+   "delta": null
+  }
+ ],
+ "containment": {},
+ "meta": {
+  "source": "topospec.data.tesseract",
+  "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/FF part 2up/FF part 2up_post_pruning.json",
+  "units": "image pixels",
+  "n_rooms": 35,
+  "n_corridor_components": 8,
+  "n_transitions": 0,
+  "n_doors": 43,
+  "n_exit_doors": 9,
+  "n_subnodes_contracted": 84,
+  "n_outside_dropped": 42
+ }
+}

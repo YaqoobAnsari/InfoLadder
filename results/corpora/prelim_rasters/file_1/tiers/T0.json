@@ -1,0 +1,82 @@
+{
+ "schema_version": "2.0.0",
+ "level": 0,
+ "building_id": "prelim:file_1",
+ "nodes": [
+  {
+   "id": "c000",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    334.44444444444446,
+    183.33333333333334
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_1",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    116.0,
+    77.0
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_2",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    306.0,
+    88.0
+   ],
+   "label": null,
+   "attrs": {}
+  },
+  {
+   "id": "room_3",
+   "kind": null,
+   "area": null,
+   "centroid": [
+    263.0,
+    313.0
+   ],
+   "label": null,
+   "attrs": {}
+  }
+ ],
+ "edges": [
+  {
+   "u": "c000",
+   "v": "room_1",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_2",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "room_3",
+   "delta": null
+  }
+ ],
+ "containment": {},
+ "meta": {
+  "source": "topospec.data.tesseract",
+  "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/file_1/file_1_post_pruning.json",
+  "units": "image pixels",
+  "n_rooms": 3,
+  "n_corridor_components": 1,
+  "n_transitions": 0,
+  "n_doors": 4,
+  "n_exit_doors": 0,
+  "n_subnodes_contracted": 0,
+  "n_outside_dropped": 0
+ }
+}

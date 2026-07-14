@@ -1,0 +1,259 @@
+{
+ "schema_version": "2.0.0",
+ "level": 3,
+ "building_id": "prelim:file_3",
+ "nodes": [
+  {
+   "id": "c000",
+   "kind": "corridor",
+   "area": null,
+   "centroid": [
+    358.06451612903226,
+    627.0967741935484
+   ],
+   "label": "corridor",
+   "attrs": {
+    "n_subnodes": 31,
+    "n_doors": 4
+   }
+  },
+  {
+   "id": "r2c_door_1",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    300.0,
+    401.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_2",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    245.0,
+    585.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_3",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    360.0,
+    647.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_4",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    495.0,
+    847.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2r_door_1",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    558.0,
+    141.0
+   ],
+   "label": "room-room door",
+   "attrs": {}
+  },
+  {
+   "id": "r2r_door_2",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    557.0,
+    461.0
+   ],
+   "label": "room-room door",
+   "attrs": {}
+  },
+  {
+   "id": "room_1",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    631.0,
+    135.0
+   ],
+   "label": null,
+   "attrs": {
+    "eq_radius": 0.0,
+    "inradius": 0.0,
+    "n_subnodes": 0,
+    "n_doors": 1
+   }
+  },
+  {
+   "id": "room_2",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    633.0,
+    305.0
+   ],
+   "label": null,
+   "attrs": {
+    "eq_radius": 0.0,
+    "inradius": 0.0,
+    "n_subnodes": 0,
+    "n_doors": 2
+   }
+  },
+  {
+   "id": "room_3",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    334.0,
+    366.0
+   ],
+   "label": null,
+   "attrs": {
+    "eq_radius": 0.0,
+    "inradius": 0.0,
+    "n_subnodes": 0,
+    "n_doors": 1
+   }
+  },
+  {
+   "id": "room_4",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    153.0,
+    514.0
+   ],
+   "label": null,
+   "attrs": {
+    "eq_radius": 0.0,
+    "inradius": 0.0,
+    "n_subnodes": 0,
+    "n_doors": 1
+   }
+  },
+  {
+   "id": "room_5",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    618.0,
+    787.0
+   ],
+   "label": null,
+   "attrs": {
+    "eq_radius": 0.0,
+    "inradius": 0.0,
+    "n_subnodes": 0,
+    "n_doors": 2
+   }
+  },
+  {
+   "id": "room_6",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    197.0,
+    794.0
+   ],
+   "label": null,
+   "attrs": {
+    "eq_radius": 0.0,
+    "inradius": 0.0,
+    "n_subnodes": 0,
+    "n_doors": 1
+   }
+  }
+ ],
+ "edges": [
+  {
+   "u": "c000",
+   "v": "r2c_door_1",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_2",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_3",
+   "delta": null
+  },
+  {
+   "u": "c000",
+   "v": "r2c_door_4",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_1",
+   "v": "room_3",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_2",
+   "v": "room_4",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_3",
+   "v": "room_6",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_4",
+   "v": "room_5",
+   "delta": null
+  },
+  {
+   "u": "r2r_door_1",
+   "v": "room_1",
+   "delta": null
+  },
+  {
+   "u": "r2r_door_1",
+   "v": "room_2",
+   "delta": null
+  },
+  {
+   "u": "r2r_door_2",
+   "v": "room_2",
+   "delta": null
+  },
+  {
+   "u": "r2r_door_2",
+   "v": "room_5",
+   "delta": null
+  }
+ ],
+ "containment": {},
+ "meta": {
+  "source": "topospec.data.tesseract",
+  "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/file_3/file_3_post_pruning.json",
+  "units": "image pixels",
+  "n_rooms": 6,
+  "n_corridor_components": 1,
+  "n_transitions": 0,
+  "n_doors": 6,
+  "n_exit_doors": 0,
+  "n_subnodes_contracted": 0,
+  "n_outside_dropped": 0
+ }
+}

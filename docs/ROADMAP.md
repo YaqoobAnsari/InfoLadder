@@ -5,6 +5,28 @@ tasks with acceptance criteria. Work in phase order; respect gates. Update check
 and the STATUS block as work completes. Task IDs are referenced from code
 (`NotImplementedError` messages), DECISIONS.md, and commit messages.
 
+## ⚡ PIVOT PLAN (D-014, 2026-07-14) — supersedes the phase details below where they conflict
+
+The six-tier T0–T5 ladder replaces R0–R4; every tier derives from the raster via
+Tesseract2. Stage-gated execution:
+
+- [x] P-1 Schema v2 + forgetting maps + validation + featurization + calibration
+      families migrated to T0–T5 (111 tests green)
+- [x] P-2 Tesseract tier factory (`build_tiers`) + browsable corpus tree
+      `results/corpora/prelim_rasters/` (21 buildings × T0–T3 JSONs + overlays,
+      provenance-marked)
+- [ ] P-3 **Scale the T0–T3 corpus to thousands of ACCURATE graphs** (user will
+      inspect): MSD render lane (raster + text labels from ground-truth geometry)
+      → Tesseract batches on slurm → corpus tree per dataset; pipeline accuracy
+      scored against MSD's shipped graphs (room recall / door precision / edge F1)
+- [ ] P-4 Re-calibrate the instrument on the T-ladder (full A0, slurm) — must PASS
+      before any tier claim (v1-ladder estimator PASSed: run 7214)
+- [ ] P-5 Probe grid on T0–T3 (V0–V6, controls, oracle skylines, MDL) — **THE
+      STAGE GATE**: only an established increasing information ordering across the
+      free tiers unlocks manual T4/T5 investment (annotation tool = future TODO)
+- [ ] P-6 Textless lane (RoomFormer-class pseudo-labels → Tesseract) for corpora
+      without text annotations (scout research in progress)
+
 ## STATUS (update on every merge)
 
 - **Current week:** W1 (2026-07-14 – 2026-07-18)
