@@ -229,3 +229,23 @@ Textless-raster lane (RoomFormer-class pseudo-labels -> Tesseract) is the scale
 path; MSD gets a render-to-raster lane so pipeline output can be validated against
 its shipped ground truth. Estimator/stats/probe machinery unchanged (representation-
 agnostic; calibration re-run on the new ladder is required before tier claims).
+
+## 2026-07-14 — D-015: Textless lane = CubiCasa segmentation first (RoomFormer-class is a modality mismatch); MSD render lane adopted with documented door limitation
+
+**Context.** Scout survey (docs/scout_reports/textless_lane_2026-07-14.md): the
+RoomFormer/PolyRoom/CAGE/HEAT family consumes point-density images from 3D scans —
+their pretrained weights do not transfer to raster floorplan DRAWINGS. The
+modality-correct family for drawings is semantic segmentation; best candidate:
+the CubiCasa5k model (PyTorch weights, room+door+window taxonomy). License flag:
+CubiCasa data CC BY-NC-SA 4.0 — pin exact terms at integration.
+**Decision.** Integrate CubiCasa first for pseudo-labels on textless rasters (P-6);
+defer RoomFormer-class unless a 3D-scan corpus enters scope. Eval protocol: score
+pseudo-labels against MSD ground truth (IoU-matched room F1 >= 0.8, type acc >= 0.7,
+adjacency agreement) before corpus use.
+**Render lane (P-3).** MSD renders (walls + room-type text + approximated opening
+gaps) adopted for scale + validation of Tesseract's ROOM/TEXT stages. LIMITATION:
+MSD ships doors only as edge attributes (no geometry/symbols), so gap-only renders
+won't exercise the door R-CNN — next step renders synthetic door ARCS (CAD
+convention) at the approximated openings; a single-plan end-to-end Tesseract test
+gates the batch scale-up. Full train.zip (4.4 GB) retained in data/raw/msd for
+corpus-scale rendering.
