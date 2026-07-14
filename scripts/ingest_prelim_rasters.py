@@ -70,7 +70,9 @@ def main() -> int:
 
     for path in kept:
         stem = path.stem.replace(" ", "_")
-        img = np.asarray(Image.open(path))
+        # convert('RGB'): palette-mode PNGs (the file_N set) otherwise yield
+        # palette INDICES, which read as all-ink
+        img = np.asarray(Image.open(path).convert("RGB"))
         large = img.shape[0] * img.shape[1] > 500_000
         params = PARAMS_LARGE if large else PARAMS_SMALL
         entry: dict = {"params": params, "shape": list(img.shape)}
