@@ -148,3 +148,21 @@ stays as fallback + cross-check QA for sources without text/door annotations.
 Gate-b annotation starts from a Tesseract2 pre-fill instead of from scratch. R3/R4
 remain annotation tasks. Multi-floor merging (FF/LF/SF) can reuse Tesseract2's own
 MultiFloor module later.
+
+## 2026-07-14 — D-012: MSD zone target uses 'apartment' grouping to avoid room-type leakage
+
+**Context.** DATA-3 dissection: MSD's shipped zoning (Zone1..Zone4) is a DETERMINISTIC
+function of room type (bedroom->Zone1, bathroom->Zone3, ...). Since room type is the
+R1 semantic label, a category-zone target would be readable from R1 — poisoning the
+R4-vs-below comparison exactly like the §5 leakage scenario, but silently.
+**Decision.** `topospec.data.msd` supports both zone modes; probing targets on MSD use
+`zone_mode='apartment'` (spatial units = access-graph components cut at entrance-door
+edges) — a grouping NOT recoverable from room types, i.e. genuinely R4-exclusive.
+Category zones remain available as a documented positive-leakage control (a target that
+SHOULD be readable at R1+ — usable as an extra instrument check).
+**Consequences.** Y_zone-on-MSD experiment configs must state zone_mode explicitly.
+MSD's access graph is undirected -> R3 adds nothing on MSD (delta='both' everywhere);
+direction measurement rests on the gold InstBuild lane, as the plan already assumed.
+(Also process note: this work was swept into commit 0e592df ahead of review by a
+`git add -A`; reviewed post-hoc, verdict good. Rule going forward: targeted adds only
+while agents share the working tree.)
