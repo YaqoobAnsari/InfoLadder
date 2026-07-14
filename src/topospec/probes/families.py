@@ -186,6 +186,12 @@ class LinearFamily(ProbeFamily):
         from sklearn.linear_model import LogisticRegression
 
         x, y = train.flat_xy(with_pe=self.with_pe)
+        if len(np.unique(y)) < 2:
+            # degenerate training set (possible in small prequential MDL blocks):
+            # degrade gracefully to the smoothed marginal, like PriorFamily
+            counts = np.bincount(y, minlength=train.n_classes).astype(np.float64)
+            p = (counts + 1.0) / (counts.sum() + train.n_classes)
+            return PriorFamily._Fitted(p)
         mu = x.mean(axis=0)
         sd = x.std(axis=0)
         sd[sd == 0] = 1.0

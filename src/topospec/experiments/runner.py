@@ -151,33 +151,60 @@ def run_calibration(
                     cell_rng = np.random.default_rng(
                         [seed, level, zlib.crc32(target.encode()), s, cell_no]
                     )
-                    est = estimate_cell(
-                        family,
-                        ds.subset(tr_idx),
-                        ds.subset(va_idx),
-                        ds.subset(te_idx),
-                        cell_rng,
-                        n_restarts=n_restarts,
-                    )
-                    rec = {
-                        "level": level,
-                        "target": target,
-                        "family": fam_name,
-                        "seed": s,
-                        **est.to_dict(),
-                    }
-                    if run_mdl and fam_name not in ("V0", "V1"):
-                        mdl = prequential_codelength(family, ds.subset(tr_idx), cell_rng)
-                        rec["mdl"] = mdl.to_dict()
-                    results.append(rec)
                     fname = f"L{level}_{target}_{fam_name}_s{s}.json"
+                    # one bad cell must not kill the campaign: record it as failed,
+                    # keep going (failures are visible, never silently dropped)
+                    try:
+                        est = estimate_cell(
+                            family,
+                            ds.subset(tr_idx),
+                            ds.subset(va_idx),
+                            ds.subset(te_idx),
+                            cell_rng,
+                            n_restarts=n_restarts,
+                        )
+                        rec = {
+                            "level": level,
+                            "target": target,
+                            "family": fam_name,
+                            "seed": s,
+                            "cell_status": "ok",
+                            **est.to_dict(),
+                        }
+                        if run_mdl and fam_name not in ("V0", "V1"):
+                            mdl = prequential_codelength(
+                                family, ds.subset(tr_idx), cell_rng
+                            )
+                            rec["mdl"] = mdl.to_dict()
+                        print(
+                            f"  cell L{level:<2} {target:<18} {fam_name:<3} s{s}: "
+                            f"I_V={est.i_v:+.3f} nats (H_V(Y)={est.h_y:.3f})",
+                            flush=True,
+                        )
+                    except Exception as exc:  # noqa: BLE001 - recorded, not hidden
+                        rec = {
+                            "level": level,
+                            "target": target,
+                            "family": fam_name,
+                            "seed": s,
+                            "cell_status": "failed",
+                            "error": f"{type(exc).__name__}: {exc}"[:500],
+                        }
+                        print(
+                            f"  cell L{level:<2} {target:<18} {fam_name:<3} s{s}: "
+                            f"FAILED ({type(exc).__name__})",
+                            flush=True,
+                        )
+                    results.append(rec)
                     (run_dir / "cells" / fname).write_text(json.dumps(rec, indent=1))
-                    print(
-                        f"  cell L{level:<2} {target:<18} {fam_name:<3} s{s}: "
-                        f"I_V={est.i_v:+.3f} nats (H_V(Y)={est.h_y:.3f})"
-                    )
 
-        report = _calibration_report(results, targets, levels, margin, ctrl_tol)
+        ok_results = [r for r in results if r.get("cell_status") == "ok"]
+        n_failed_cells = len(results) - len(ok_results)
+        report = _calibration_report(ok_results, targets, levels, margin, ctrl_tol)
+        report["n_cells"] = len(results)
+        report["n_failed_cells"] = n_failed_cells
+        if n_failed_cells:
+            report["pass"] = False  # a calibration with failed cells cannot PASS
         (run_dir / "summary.json").write_text(json.dumps(report, indent=2))
         _print_report(report)
 
@@ -191,6 +218,7 @@ def run_calibration(
                 "status": "completed",
                 "smoke": smoke,
                 "n_cells": len(results),
+                "n_failed_cells": n_failed_cells,
                 "calibration_pass": report["pass"],
                 "config_sha256": config_sha,
                 "git_sha": manifest["git"]["sha"],
