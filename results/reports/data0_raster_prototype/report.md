@@ -5,7 +5,7 @@ multi-scale marker watershed on the free-space distance transform), turned
 into a validated R0 connectivity graph, and given preliminary PDE heat
 labels. QA overlays below show segmentation + graph over the source sheet.
 
-**11 ingested OK · 10 failed** · 10 duplicate text-variants deduped · 4 non-floorplans skipped
+**21 ingested OK · 0 failed** · 10 duplicate text-variants deduped · 4 non-floorplans skipped
 
 | file | status | rooms | opening edges | wall-only adj | auto split px |
 |---|---|---|---|---|---|
@@ -20,29 +20,16 @@ labels. QA overlays below show segmentation + graph over the source sheet.
 | LF part 1.png | ok | 20 | 20 | 5 | 20 |
 | LF part 2.png | ok | 62 | 73 | 40 | 20 |
 | SF part 1upE.png | ok | 99 | 132 | 92 | 28 |
-| file_1.png | failed | — | — | — | — |
-| file_10.png | failed | — | — | — | — |
-| file_2.png | failed | — | — | — | — |
-| file_3.png | failed | — | — | — | — |
-| file_4.png | failed | — | — | — | — |
-| file_5.png | failed | — | — | — | — |
-| file_6.png | failed | — | — | — | — |
-| file_7.png | failed | — | — | — | — |
-| file_8.png | failed | — | — | — | — |
-| file_9.png | failed | — | — | — | — |
-
-## Failures
-
-- `file_1.png`: prelim:file_1: no enclosed rooms found at any split radius [8, 12, 16, 20, 24, 28, 32, 40, 48] — image may not match clean-CAD-raster assumptions
-- `file_10.png`: prelim:file_10: no enclosed rooms found at any split radius [8, 12, 16, 20, 24, 28, 32, 40, 48] — image may not match clean-CAD-raster assumptions
-- `file_2.png`: prelim:file_2: no enclosed rooms found at any split radius [8, 12, 16, 20, 24, 28, 32, 40, 48] — image may not match clean-CAD-raster assumptions
-- `file_3.png`: prelim:file_3: no enclosed rooms found at any split radius [8, 12, 16, 20, 24, 28, 32, 40, 48] — image may not match clean-CAD-raster assumptions
-- `file_4.png`: prelim:file_4: no enclosed rooms found at any split radius [8, 12, 16, 20, 24, 28, 32, 40, 48] — image may not match clean-CAD-raster assumptions
-- `file_5.png`: prelim:file_5: no enclosed rooms found at any split radius [8, 12, 16, 20, 24, 28, 32, 40, 48] — image may not match clean-CAD-raster assumptions
-- `file_6.png`: prelim:file_6: no enclosed rooms found at any split radius [8, 12, 16, 20, 24, 28, 32, 40, 48] — image may not match clean-CAD-raster assumptions
-- `file_7.png`: prelim:file_7: no enclosed rooms found at any split radius [8, 12, 16, 20, 24, 28, 32, 40, 48] — image may not match clean-CAD-raster assumptions
-- `file_8.png`: prelim:file_8: no enclosed rooms found at any split radius [8, 12, 16, 20, 24, 28, 32, 40, 48] — image may not match clean-CAD-raster assumptions
-- `file_9.png`: prelim:file_9: no enclosed rooms found at any split radius [8, 12, 16, 20, 24, 28, 32, 40, 48] — image may not match clean-CAD-raster assumptions
+| file_1.png | ok | 40 | 55 | 17 | 12 |
+| file_10.png | ok | 22 | 34 | 5 | 16 |
+| file_2.png | ok | 21 | 22 | 19 | 24 |
+| file_3.png | ok | 29 | 43 | 13 | 24 |
+| file_4.png | ok | 32 | 47 | 14 | 8 |
+| file_5.png | ok | 23 | 29 | 2 | 24 |
+| file_6.png | ok | 21 | 25 | 13 | 28 |
+| file_7.png | ok | 38 | 72 | 10 | 24 |
+| file_8.png | ok | 29 | 35 | 17 | 8 |
+| file_9.png | ok | 23 | 31 | 5 | 28 |
 
 ## QA overlays (representative)
 
@@ -62,6 +49,14 @@ labels. QA overlays below show segmentation + graph over the source sheet.
 
 ![LF part 2.png](figures/LF_part_2.png)
 
+### file_1.png
+
+![file_1.png](figures/file_1.png)
+
+### file_7.png
+
+![file_7.png](figures/file_7.png)
+
 All overlays: `data/derived/prelim_rasters/overlays/` (not tracked).
 
 Known limitations (documented in `topospec/data/raster.py`): R0 only —
@@ -70,5 +65,15 @@ stairs/elevators segment as rooms; exterior courtyards can read as
 interior on open-site sheets; FF sheets are per-sheet graphs (stitching
 into ONE building is part of Gate-b prep). PDE labels are pixel-resolution
 preliminaries (no convergence check yet — ROADMAP A-1).
+
+**⚠ file_N residential renders — pipeline smoke tests ONLY, not
+measurement data.** Their furniture is drawn with wall-thickness strokes,
+so pure morphology over-segments (e.g. file_1: ~40 regions for a 4-room
+flat; A/B sweeps of the wall filter either keep furniture or destroy
+walls). The institutional FF/LF/SF sheets do NOT have this problem (thin
+furniture strokes) and extract cleanly. Real residential corpora arrive
+with vector annotations (Structured3D/CubiCasa/MSD — no extraction), and
+the FloorPlanCAD lane rasterizes wall primitives only, so this limitation
+is confined to these test images.
 
 _Regenerate with `scripts/make_reports.py`._

@@ -94,6 +94,16 @@ def data0_report() -> None:
         "into ONE building is part of Gate-b prep). PDE labels are pixel-resolution",
         "preliminaries (no convergence check yet — ROADMAP A-1).",
         "",
+        "**⚠ file_N residential renders — pipeline smoke tests ONLY, not",
+        "measurement data.** Their furniture is drawn with wall-thickness strokes,",
+        "so pure morphology over-segments (e.g. file_1: ~40 regions for a 4-room",
+        "flat; A/B sweeps of the wall filter either keep furniture or destroy",
+        "walls). The institutional FF/LF/SF sheets do NOT have this problem (thin",
+        "furniture strokes) and extract cleanly. Real residential corpora arrive",
+        "with vector annotations (Structured3D/CubiCasa/MSD — no extraction), and",
+        "the FloorPlanCAD lane rasterizes wall primitives only, so this limitation",
+        "is confined to these test images.",
+        "",
         "_Regenerate with `scripts/make_reports.py`._",
     ]
     (out / "report.md").write_text("\n".join(lines) + "\n")
