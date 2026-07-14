@@ -166,3 +166,20 @@ direction measurement rests on the gold InstBuild lane, as the plan already assu
 (Also process note: this work was swept into commit 0e592df ahead of review by a
 `git add -A`; reviewed post-hoc, verdict good. Rule going forward: targeted adds only
 while agents share the working tree.)
+
+## 2026-07-14 — D-013: Balanced per-building zone secrets after A0 caught a base-rate control leak
+
+**Context.** Full A0 calibration (slurm 7207) FAILED on exactly 2 of 53 checks:
+planted_zone_ctrl at R4, V2/V3, extracted +0.115 nats from SHUFFLED labels. Diagnosis:
+control shuffles preserve each building's label base-rate; iid zone secrets give
+buildings uneven base-rates; R4 zone-size features identify the building — so linear
+probes read the per-building BASE RATE, not the labels. A channel in the instrument,
+not memorization. (GNN controls passed; linear probes latch onto the scalar feature.)
+**Decision.** Synthetic generator now assigns zone secrets BALANCED per building
+(half 0s/half 1s, shuffled), pinning within-building marginals near 0.5 and closing
+the channel by design. Regression test on 30-building corpora. Smoke calibration PASS
+after fix; full run resubmitted. The FAILED run stays in the registry per protocol.
+**Consequences.** For REAL data (Phase B), the same channel exists whenever per-building
+base rates vary: the analysis must report per-building-marginal controls (or a
+building-marginal-aware floor) alongside global H_V(Y) — noted for EXPERIMENT_PROTOCOL
+before B-1 configs are written.

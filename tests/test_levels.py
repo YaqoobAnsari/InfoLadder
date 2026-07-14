@@ -135,3 +135,17 @@ def test_planted_labels_cover_all_rooms(building):
         # non-degenerate marginals (both classes present in a 20-room building)
         vals = np.array(list(lab.values()))
         assert 0 < vals.mean() < 1
+
+
+def test_planted_zone_base_rate_balanced(rng):
+    """Per-building zone-label marginals must concentrate near 0.5 — uneven base
+    rates opened a control-leak channel through R4 zone-size features (job 7207)."""
+    from topospec.data.synthetic import generate_corpus, planted_labels
+
+    marginals = []
+    for g in generate_corpus(rng, n_buildings=30):
+        lab = planted_labels(g, "planted_zone")
+        marginals.append(np.mean(list(lab.values())))
+    marginals = np.array(marginals)
+    assert abs(marginals.mean() - 0.5) < 0.06
+    assert marginals.std() < 0.18  # room-count jitter only, no zone-count skew

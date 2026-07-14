@@ -114,12 +114,19 @@ def generate_building(
     # --- containment: random (non-geometric) zone partition, zones -> wings
     zones = [f"z{i}" for i in range(n_zones)]
     wings = [f"w{i}" for i in range(n_wings)]
-    for zid in zones:
+    # BALANCED zone secrets per building (half 0s, half 1s, shuffled): with iid
+    # secrets, buildings get uneven label base-rates, and shuffled-label controls
+    # can then extract the per-building base rate from building-identifying R4
+    # features (zone sizes) — the full A0 run caught exactly this (+0.115 nats on
+    # planted_zone_ctrl at R4, slurm job 7207). Balance kills the channel.
+    secret_pool = [i % 2 for i in range(n_zones)]
+    rng.shuffle(secret_pool)
+    for zid, secret in zip(zones, secret_pool, strict=True):
         nodes[zid] = Node(
             id=zid,
             kind="zone",
             label="zone",
-            attrs={"secret": int(rng.integers(0, 2)), "zone_size": 0},
+            attrs={"secret": int(secret), "zone_size": 0},
         )
     for wid in wings:
         nodes[wid] = Node(id=wid, kind="wing", label="wing", attrs={})
