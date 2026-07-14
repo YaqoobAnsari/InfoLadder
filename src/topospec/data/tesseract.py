@@ -14,8 +14,12 @@ This adapter contracts the navigation graph into the spectrum's space graph:
   corridor_* mesh      -> connected components of the corridor-corridor subgraph,
                           one corridor space node per component
   *_door_N             -> door node (R1+); edge tau='door' on its space links
+  transition nodes     -> stairs/elevators: space nodes (kind 'room', label kept)
+                          — vertical circulation matters for Y_egress
   corridor-room edge   -> direct open passage: space-space edge tau='corridor-link'
   outside_* nodes      -> dropped; doors touching outside get label 'exit door'
+                          (fresh post_pruning exports fold outside away — feed
+                          pre_pruning if exit labels are needed)
 
 Output level is R2 (kinds + labels + edge taus are all known); R1/R0 come from
 forget(). Direction (R3) and containment (R4) are NOT derivable from Tesseract2
@@ -82,6 +86,11 @@ def to_spectrum_graph(
             rooms[nid] = n
             space_of[nid] = nid
 
+    # transitions (stairs/elevators): standalone space nodes
+    transitions = {nid: n for nid, n in tnodes.items() if n["type"] == "transition"}
+    for nid in transitions:
+        space_of[nid] = nid
+
     # corridors: connected components of the corridor-corridor subgraph
     corridor_ids = [nid for nid, n in tnodes.items() if n["type"] == "corridor"]
     corridor_adj: dict[str, list[str]] = {nid: [] for nid in corridor_ids}
@@ -131,6 +140,15 @@ def to_spectrum_graph(
             area=None,
             centroid=(float(arr[:, 0].mean()), float(arr[:, 1].mean())),
             label="corridor",
+        )
+    for tid, n in transitions.items():
+        pos = n.get("position") or (0.0, 0.0)
+        nodes[tid] = Node(
+            id=tid,
+            kind="room",  # schema space kinds are room|door|corridor; label says what it is
+            area=None,
+            centroid=(float(pos[0]), float(pos[1])),
+            label=str(n.get("label") or "transition (stairs/elevator)"),
         )
     for did, n in doors.items():
         pos = n.get("position") or (0.0, 0.0)
