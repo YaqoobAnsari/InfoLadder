@@ -30,7 +30,10 @@ def git_info() -> dict:
             return None
 
     sha = run("rev-parse", "HEAD")
-    status = run("status", "--porcelain")
+    # registry.jsonl is machine-appended by every completed run (append-only by
+    # design) — its dirtiness between commits is expected and must not block the
+    # next chained/overnight registered run
+    status = run("status", "--porcelain", "--", ".", ":(exclude)results/registry.jsonl")
     return {
         "sha": sha or "NO-GIT",
         "dirty": bool(status) if status is not None else None,

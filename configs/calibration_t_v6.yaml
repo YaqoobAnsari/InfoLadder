@@ -1,0 +1,25 @@
+# V6 (GraphGPS) row of the T-ladder instrument calibration (D-014 P-4 complement).
+# Completes the capacity sweep's top rung on the six-tier ladder. MDL off for V6
+# (CPU cost; MDL-for-V6 recorded as follow-up). Immutable once used.
+experiment: calibration_a0
+seed: 20260714
+device: cpu
+
+n_buildings: 60
+levels: [0, 1, 2, 3, 4, 5]
+targets:
+  - planted_degree
+  - planted_label
+  - planted_door
+  - planted_attr
+  - planted_delta
+  - planted_zone
+  - planted_door_ctrl
+  - planted_zone_ctrl
+families: [V6]
+seeds: [0, 1, 2]
+n_restarts: 3
+mdl: false
+
+margin_nats: 0.1
+ctrl_tol_nats: 0.05
