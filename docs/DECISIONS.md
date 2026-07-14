@@ -128,3 +128,23 @@ vector annotations and need no extraction). Revisit stitching only if ArchCAD ac
 is denied AND the primary corpora leave the institutional regime under-powered.
 **Consequences.** DATA-7 partially closed (parser ✅, corpus ❌ for now); MSD loader
 (DATA-3) promoted to next data task (shipped zone labels = near-R4 at zero cost).
+
+## 2026-07-14 — D-011: Tesseract2 (user's own pipeline) is the PRIMARY raster→graph lane; morphology lane demoted to fallback/QA
+
+**Context.** User directive: "use github.com/YaqoobAnsari/Tesseract2". Tesseract2 is
+the plan §3.3 R1 lineage — CRAFT text detection (labels rooms from the sheet's text
+annotations, which is exactly what the prelim pool's `up`/`upE` variants carry),
+Faster R-CNN door detection, flood-fill segmentation → typed navigable graphs (rooms,
+corridors, doors incl. exit/r2c/r2r/c2c types, outside, stairs/elevator transitions,
+multi-floor merging). The morphology lane's QA on FF_part_1upE showed pure morphology
+tops out at a corrected R0 (user flagged the uncorrected graph as wrong; two
+graph-correctness passes fixed the worst, but no doors/labels are derivable).
+**Decision.** Adapter `topospec/data/tesseract.py` converts Tesseract2 navigation
+JSON → SpectrumGraph R2 (rooms + corridor components + typed door nodes; taus known)
+with R1/R0 via forget(). Tesseract2 runs as its own env + slurm jobs (tess-runner
+agent; repo cloned at ../Tesseract2). The morphology lane (topospec/data/raster.py)
+stays as fallback + cross-check QA for sources without text/door annotations.
+**Consequences.** Prelim pool upgrade path: R0 (morphology) → R2 (Tesseract2), and
+Gate-b annotation starts from a Tesseract2 pre-fill instead of from scratch. R3/R4
+remain annotation tasks. Multi-floor merging (FF/LF/SF) can reuse Tesseract2's own
+MultiFloor module later.

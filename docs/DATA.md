@@ -10,7 +10,7 @@ moment a dataset lands (URL used, version/commit, date, checksum, license note).
 | **prelim_rasters** (user-supplied) | 1 institutional building (FF/LF/SF, multi-sheet) + 10 small residential plans | R0–R2 via DATA-0 ingest lane; R3/R4 by hand | **preliminary pipeline testing**; Gate-b candidate building | ✅ landed 2026-07-14 → `data/raw/prelim_rasters/` (see its README) |
 | Structured3D | ~3.5K scenes / ~20K rooms | R0–R2 auto | silver corpus; Gate-c smoke set | ⬜ not downloaded |
 | CubiCasa5K | ~5K plans / ~25K rooms | R0–R2 auto | silver corpus (residential regime) | ⬜ not downloaded |
-| MSD (Modified Swiss Dwellings, ECCV 2024) | 5,372 multi-unit plans / ~85K rooms | R0–R2 auto + **near-R4 from shipped per-room zone labels** | silver corpus + zero-cost rich level | ⬜ not downloaded |
+| MSD (Modified Swiss Dwellings, ECCV 2024) | ~4,167 usable (train) multi-unit plans / ~140K spaces | R0–R2 auto + **near-R4 from zone/apartment grouping** | silver corpus + zero-cost rich level | ✅ 200-plan subset landed 2026-07-14 → `data/raw/msd/`; loader `topospec.data.msd` |
 | InstBuild | 5–10 institutional buildings | R0–R4 (gold, hand-annotated) | out-of-regime stress set; S4 scale split; annotation-cost measurement | 🟡 partially unblocked: prelim_rasters FF building = candidate #1; ArchCAD-400K / FloorPlanCAD scouting below (DATA-7) |
 | Code corpus (Phase A2) | 1 established dataset | AST → +dataflow → +call (auto) | generality check C5 | ⬜ pending A2-1 decision |
 
@@ -44,11 +44,34 @@ being annotation-bound for R0–R2 and gold effort concentrates on R3/R4 only.
   we parse the SVGs). License: CC BY-NC 4.0 — non-commercial research OK; note in paper.
 - Loader: `topospec.data.cubicasa` (DATA-2).
 
-### MSD — Modified Swiss Dwellings
-- Source: ECCV 2024 release (check https://caviavart.github.io/msd-dataset/ and the
-  4TU/Zenodo mirror). Ships access graphs + per-room **zone labels** on 5,372 plans —
-  these auto-derive the near-R4 level (plan Lane 5). License: check on download.
-- Loader: `topospec.data.msd` (DATA-3).
+### MSD — Modified Swiss Dwellings  ✅ subset landed 2026-07-14 (DATA-3)
+- Source: **4TU.ResearchData** `e1d89cb5-6872-48fc-be63-aadd687ee6f9` (v2, 2023-07-11),
+  ECCV 2024. **License: CC BY 4.0** (attribute van Engelenburg et al.; fixtures may be
+  committed). Files: `…-v1-train.zip` (4.76 GB, uuid `279ef4b4-…`), `…-v1-test.zip`
+  (0.79 GB, uuid `7cccae96-…`, sha256 `bd65dfe6…928e89f`).
+- **Only the ~4,167 TRAIN plans are usable**: the test split withholds `graph_out`
+  (geometry ground truth — MSD is a generation benchmark). Full format dissection +
+  the two leakage/direction caveats: `docs/scout_reports/msd_2026-07-14.md`.
+- 4TU has **no HTTP range support**, but the train zip stores tiny `graph_in/` before
+  `graph_out/`, so a subset is stream-extractable cheaply. Landed 200 plans into
+  `data/raw/msd/{graph_out,graph_in}/` via `stream-unzip`:
+  ```python
+  # /data1/yansari/.conda/envs/topofield/bin/pip install stream-unzip
+  import requests
+  from stream_unzip import stream_unzip
+  URL = "https://data.4tu.nl/file/e1d89cb5-6872-48fc-be63-aadd687ee6f9/279ef4b4-d3bd-41f4-b0c9-5e9af8cce6f6"
+  def chunks():
+      with requests.get(URL, stream=True) as r:
+          yield from r.iter_content(1 << 20)
+  # iterate stream_unzip(chunks()); save graph_out/<id>.pickle (+ buffered graph_in),
+  # break after N -> ~8.7 MB streamed for 200 plans (full script in scout report)
+  ```
+  For the FULL corpus: download the whole train zip (4.76 GB) and drop all
+  `graph_out/*.pickle` into `data/raw/msd/graph_out/`.
+- Loader: `topospec.data.msd.build_graphs(raw_dir, out_dir, zone_mode=…)` → validated
+  R0–R4 JSON per building in `data/derived/msd/` + `exclusions.jsonl`. 200-plan subset:
+  0 exclusions, 6,720 spaces, all levels validate (14.6 s login-node). Full corpus
+  (4,167 plans → ~20k JSON files) runs via slurm.
 
 ### InstBuild (gold institutional set)
 - **Needs user/advisor decision** (plan §14.1): candidate sources — university facility
