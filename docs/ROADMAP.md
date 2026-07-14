@@ -19,8 +19,9 @@ Tesseract2. Stage-gated execution:
       inspect): MSD render lane (raster + text labels from ground-truth geometry)
       → Tesseract batches on slurm → corpus tree per dataset; pipeline accuracy
       scored against MSD's shipped graphs (room recall / door precision / edge F1)
-- [ ] P-4 Re-calibrate the instrument on the T-ladder (full A0, slurm) — must PASS
-      before any tier claim (v1-ladder estimator PASSed: run 7214)
+- [x] P-4 T-ladder instrument calibration **PASS** (slurm 7220, 2026-07-14: 71/71
+      checks; every planted target recovered exactly at its tier — see
+      results/reports/a0_calibration/). V6 row running separately (GPU resubmit).
 - [ ] P-5 Probe grid on T0–T3 (V0–V6, controls, oracle skylines, MDL) — **THE
       STAGE GATE**: only an established increasing information ordering across the
       free tiers unlocks manual T4/T5 investment (annotation tool = future TODO)
