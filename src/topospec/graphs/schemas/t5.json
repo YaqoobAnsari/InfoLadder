@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://topofield.dev/schemas/spectrum/r0.json",
-  "title": "SpectrumGraph level R0",
+  "$id": "https://topofield.dev/schemas/spectrum/t5.json",
+  "title": "SpectrumGraph tier T5",
   "type": "object",
   "required": [
     "schema_version",
@@ -18,7 +18,7 @@
       "type": "string"
     },
     "level": {
-      "const": 0
+      "const": 5
     },
     "building_id": {
       "type": "string",
@@ -43,7 +43,15 @@
             "minLength": 1
           },
           "kind": {
-            "type": "null"
+            "enum": [
+              "room",
+              "door",
+              "corridor",
+              "transition",
+              "corridor-cluster",
+              "zone",
+              "wing"
+            ]
           },
           "area": {
             "type": [
@@ -64,11 +72,13 @@
             "maxItems": 2
           },
           "label": {
-            "type": "null"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "attrs": {
-            "type": "object",
-            "maxProperties": 0
+            "type": "object"
           }
         }
       }
@@ -80,7 +90,6 @@
         "required": [
           "u",
           "v",
-          "tau",
           "delta"
         ],
         "additionalProperties": false,
@@ -91,18 +100,21 @@
           "v": {
             "type": "string"
           },
-          "tau": {
-            "type": "null"
-          },
           "delta": {
-            "type": "null"
+            "enum": [
+              "both",
+              "forward",
+              "backward"
+            ]
           }
         }
       }
     },
     "containment": {
       "type": "object",
-      "maxProperties": 0
+      "additionalProperties": {
+        "type": "string"
+      }
     },
     "meta": {
       "type": "object"

@@ -1,10 +1,10 @@
-"""Level-aware validation — plan Appendix B (machine-checkable schema per level).
+"""Tier-aware validation for the T0..T5 ladder (schema v2, D-014).
 
 Two layers:
-  1. structural JSON-schema validation (graphs/schemas/*.json, versioned artifacts of
-     the T5 toolkit claim);
-  2. semantic invariants that JSON Schema cannot express (containment forest shape,
-     referential integrity, level-licensed fields only).
+  1. structural JSON-schema validation (graphs/schemas/t{k}.json, versioned
+     toolkit artifacts);
+  2. semantic invariants JSON Schema cannot express (containment forest shape,
+     referential integrity, tier-licensed fields only).
 
 `validate_graph` raises SchemaError with all violations collected, or returns True.
 """
@@ -17,8 +17,8 @@ from importlib import resources
 from topospec.graphs.schema import (
     CONTAINMENT_RANK,
     EDGE_DELTAS,
-    EDGE_TAUS,
     HIERARCHY_KINDS,
+    MEASURE_ATTR_KEYS,
     SPACE_KINDS,
     SpectrumGraph,
 )
@@ -35,7 +35,7 @@ class SchemaError(ValueError):
 def json_schema_for_level(level: int) -> dict:
     text = (
         resources.files("topospec.graphs")
-        .joinpath(f"schemas/r{level}.json")
+        .joinpath(f"schemas/t{level}.json")
         .read_text()
     )
     return json.loads(text)
@@ -43,8 +43,9 @@ def json_schema_for_level(level: int) -> dict:
 
 def validate_graph(g: SpectrumGraph, use_jsonschema: bool = True) -> bool:
     v: list[str] = []
-    if g.level not in (0, 1, 2, 3, 4):
-        raise SchemaError([f"level {g.level} not in 0..4"])
+    if g.level not in (0, 1, 2, 3, 4, 5):
+        raise SchemaError([f"level {g.level} not in 0..5"])
+    lvl = g.level
 
     node_ids = set(g.nodes.keys())
     for nid, n in g.nodes.items():
@@ -53,21 +54,39 @@ def validate_graph(g: SpectrumGraph, use_jsonschema: bool = True) -> bool:
         if n.area is not None and n.area < 0:
             v.append(f"node {nid}: negative area")
 
-    # --- kind licensing per level
+    # --- node licensing per tier
     for nid, n in g.nodes.items():
-        if g.level == 0:
+        if lvl == 0:
             if n.kind is not None:
-                v.append(f"R0 node {nid}: kind must be None, got {n.kind!r}")
+                v.append(f"T0 node {nid}: kind must be None, got {n.kind!r}")
             if n.label is not None:
-                v.append(f"R0 node {nid}: label must be None")
-            if n.attrs:
-                v.append(f"R0 node {nid}: attrs must be empty")
+                v.append(f"T0 node {nid}: label must be None")
         else:
-            allowed = SPACE_KINDS if g.level < 4 else SPACE_KINDS + HIERARCHY_KINDS
+            allowed: tuple[str, ...]
+            if lvl == 1:
+                allowed = ("room", "corridor", "transition")
+            elif lvl < 5:
+                allowed = SPACE_KINDS
+            else:
+                allowed = SPACE_KINDS + HIERARCHY_KINDS
             if n.kind not in allowed:
-                v.append(f"R{g.level} node {nid}: kind {n.kind!r} not in {allowed}")
-            if g.level < 4 and n.attrs:
-                v.append(f"R{g.level} node {nid}: attribute blocks are R4-only")
+                v.append(f"T{lvl} node {nid}: kind {n.kind!r} not in {allowed}")
+        # measured attributes are T3+ content
+        if lvl < 3:
+            if n.area is not None:
+                v.append(f"T{lvl} node {nid}: area is a T3+ measured attribute")
+            if n.attrs:
+                v.append(f"T{lvl} node {nid}: attrs are T3+ content")
+        else:
+            if n.kind in HIERARCHY_KINDS:
+                pass  # zone/wing blocks are free-form (T5-only kinds)
+            else:
+                bad = [k for k in n.attrs if k not in MEASURE_ATTR_KEYS]
+                if bad:
+                    v.append(
+                        f"T{lvl} node {nid}: non-measure attr keys {bad} "
+                        f"(allowed: {list(MEASURE_ATTR_KEYS)})"
+                    )
 
     # --- edges
     seen_keys = set()
@@ -83,25 +102,31 @@ def validate_graph(g: SpectrumGraph, use_jsonschema: bool = True) -> bool:
         for nid in (e.u, e.v):
             if g.nodes[nid].kind in HIERARCHY_KINDS:
                 v.append(f"edge {e.key()}: touches hierarchy node {nid}")
-        if g.level < 2:
-            if e.tau is not None:
-                v.append(f"R{g.level} edge {e.key()}: tau is R2+")
-        else:
-            if e.tau not in EDGE_TAUS:
-                v.append(f"R{g.level} edge {e.key()}: tau {e.tau!r} not in {EDGE_TAUS}")
-        if g.level < 3:
+        if lvl < 2:
+            ku, kv = g.nodes[e.u].kind, g.nodes[e.v].kind
+            if ku == "door" or kv == "door":
+                v.append(f"T{lvl} edge {e.key()}: door nodes are T2+")
+        if lvl < 4:
             if e.delta is not None:
-                v.append(f"R{g.level} edge {e.key()}: delta is R3+")
+                v.append(f"T{lvl} edge {e.key()}: delta is T4+")
         else:
             if e.delta not in EDGE_DELTAS:
                 v.append(
-                    f"R{g.level} edge {e.key()}: delta {e.delta!r} not in {EDGE_DELTAS}"
+                    f"T{lvl} edge {e.key()}: delta {e.delta!r} not in {EDGE_DELTAS}"
                 )
 
-    # --- containment forest (R4 only)
-    if g.level < 4:
+    # door nodes themselves are T2+ regardless of edges
+    if lvl < 2:
+        for nid, n in g.nodes.items():
+            if n.kind == "door":
+                v.append(f"T{lvl} node {nid}: door nodes are T2+")
+
+    # --- containment forest (T5 only)
+    if lvl < 5:
         if g.containment:
-            v.append(f"R{g.level}: containment is R4-only")
+            v.append(f"T{lvl}: containment is T5-only")
+        for nid in g.hierarchy_nodes():
+            v.append(f"T{lvl} node {nid}: hierarchy kinds are T5-only")
     else:
         for child, parent in g.containment.items():
             if child not in node_ids or parent not in node_ids:
@@ -116,10 +141,7 @@ def validate_graph(g: SpectrumGraph, use_jsonschema: bool = True) -> bool:
                 and pk in CONTAINMENT_RANK
                 and CONTAINMENT_RANK[pk] <= CONTAINMENT_RANK[ck]
             ):
-                v.append(
-                    f"containment {child}->{parent}: rank({pk}) <= rank({ck})"
-                )
-        # acyclicity / forest: each child has one parent by dict shape; check no cycles
+                v.append(f"containment {child}->{parent}: rank({pk}) <= rank({ck})")
         for start in g.containment:
             seen = {start}
             cur = g.containment.get(start)
@@ -129,7 +151,6 @@ def validate_graph(g: SpectrumGraph, use_jsonschema: bool = True) -> bool:
                     break
                 seen.add(cur)
                 cur = g.containment.get(cur)
-        # hierarchy nodes must be reachable as parents or children in the forest
         in_forest = set(g.containment) | set(g.containment.values())
         for hid in g.hierarchy_nodes():
             if hid not in in_forest:

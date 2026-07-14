@@ -6,5 +6,5 @@ floorplan graph representation spectrum R0..R4 defined in T4_spectrum_study_plan
 
 __version__ = "0.1.0"
 
-SCHEMA_VERSION = "0.1.0"
-LEVELS = (0, 1, 2, 3, 4)
+SCHEMA_VERSION = "2.0.0"
+LEVELS = (0, 1, 2, 3, 4, 5)

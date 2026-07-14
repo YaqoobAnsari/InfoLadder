@@ -1,8 +1,8 @@
 from topospec.graphs.levels import forget  # noqa: F401
 from topospec.graphs.schema import (  # noqa: F401
     EDGE_DELTAS,
-    EDGE_TAUS,
     HIERARCHY_KINDS,
+    MEASURE_ATTR_KEYS,
     SPACE_KINDS,
     Edge,
     Node,

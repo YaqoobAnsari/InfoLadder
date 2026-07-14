@@ -1,24 +1,26 @@
-"""Level-respecting featurization — THE single enforcement point (plan §8, §4.4).
+"""Tier-respecting featurization — THE single enforcement point (plan §8, §4.4).
 
 "The representation defines the interface; probes never peek past it."
 
-Feature blocks are strictly additive with level, mirroring the refinement ladder:
+Feature blocks are strictly additive with tier, mirroring the T0..T5 ladder (D-014):
 
-  R0+  geom(3):        area (log1p), centroid x, y (per-building standardized)
-  R1+  kind(3):        one-hot in {room, door, corridor}
-       label(8):       stable hash bucket of semantic label
-  R2+  tau_counts(3):  incident edge counts per tau
-  R3+  delta_counts(3): incident counts [outgoing-restricted, incoming-restricted, both]
-  R4+  zone(1+8+1):    inherited zone attr 'secret' (or 0), zone-id hash bucket(8),
-                       zone_size (log1p)
+  T0+  geom(2):          centroid x, y (per-building standardized)
+  T1+  kind(4):          one-hot in {room, corridor, transition, door}
+       label(8):         stable hash bucket of the semantic text label
+  T2+  door_counts(4):   incident door nodes by subtype
+                         {room-corridor, room-room, corridor-corridor, exit}
+  T3+  measures(5):      log1p(area), eq_radius, inradius, n_subnodes, n_doors
+  T4+  delta_counts(3):  incident [outgoing-restricted, incoming-restricted, both]
+  T5   zone(1+8+1):      inherited zone 'secret' (or 0), zone-id hash bucket(8),
+                         log1p(zone_size)
 
-For node-level linear probes (V2/V3) incident-edge aggregates ARE the level's edge
-content at the node interface; GNN probes additionally receive edge_index/edge_attr.
-At R3+, direction-restricted edges are materialized as single-direction entries in
-edge_index (delta semantics: 'forward' = u->v only).
+For node-level linear probes (V2/V3) incident aggregates ARE the tier's local
+content at the node interface; GNN probes additionally receive edge_index (and at
+T4+ direction-materialized edges + delta edge features). Door nodes participate as
+graph nodes from T2 (their own features carry kind=door + subtype label bucket).
 
 Optional positional-encoding block (V3): top-`n_pe` Laplacian eigenvectors of the
-undirected skeleton — structural, available at every level (it uses no typed content).
+undirected skeleton — structural, available at every tier.
 """
 
 from __future__ import annotations
@@ -28,10 +30,17 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from topospec.graphs.schema import EDGE_TAUS, SPACE_KINDS, SpectrumGraph
+from topospec.graphs.schema import SPACE_KINDS, SpectrumGraph
 
 N_LABEL_BUCKETS = 8
 N_ZONE_BUCKETS = 8
+
+DOOR_SUBTYPE_ORDER = (
+    "room-corridor door",
+    "room-room door",
+    "corridor-corridor door",
+    "exit door",
+)
 
 
 def _bucket(s: str, n: int) -> int:
@@ -39,14 +48,16 @@ def _bucket(s: str, n: int) -> int:
 
 
 def feature_dim(level: int, with_pe: bool = False, n_pe: int = 4) -> int:
-    d = 3
+    d = 2
     if level >= 1:
-        d += 3 + N_LABEL_BUCKETS
+        d += 4 + N_LABEL_BUCKETS
     if level >= 2:
-        d += 3
+        d += 4
     if level >= 3:
-        d += 3
+        d += 5
     if level >= 4:
+        d += 3
+    if level >= 5:
         d += 1 + N_ZONE_BUCKETS + 1
     if with_pe:
         d += n_pe
@@ -54,24 +65,22 @@ def feature_dim(level: int, with_pe: bool = False, n_pe: int = 4) -> int:
 
 
 def edge_feature_dim(level: int) -> int:
-    return (3 if level >= 2 else 0) + (3 if level >= 3 else 0)
+    return 3 if level >= 4 else 0
 
 
 def zone_secret_column() -> int:
-    """Column index of the inherited zone 'secret' attribute in R4 features (no PE).
-
-    Used by the V0 parameter-free readout for planted_zone (plan §8: richness turns a
-    learning problem into a lookup)."""
-    return feature_dim(3)
+    """Column index of the inherited zone 'secret' attribute in T5 features (no
+    PE). Used by the V0 parameter-free readout for planted_zone."""
+    return feature_dim(4)
 
 
 @dataclass
 class FeaturizedGraph:
     building_id: str
     level: int
-    node_ids: list[str]  # space nodes only, sorted
+    node_ids: list[str]  # space nodes (incl. doors at T2+), sorted
     x: np.ndarray  # (n, d) float32
-    edge_index: np.ndarray  # (2, m) int64, direction-materialized
+    edge_index: np.ndarray  # (2, m) int64, direction-materialized at T4+
     edge_attr: np.ndarray  # (m, de) float32
     node_pos: dict[str, int]  # node_id -> row
 
@@ -79,36 +88,19 @@ class FeaturizedGraph:
 def featurize(
     g: SpectrumGraph, with_pe: bool = False, n_pe: int = 4
 ) -> FeaturizedGraph:
-    """Featurize a graph AT ITS OWN LEVEL. To probe level k, first forget(g, k)."""
+    """Featurize a graph AT ITS OWN TIER. To probe tier k, first forget(g, k)."""
     level = g.level
     spaces = g.space_nodes()
     node_ids = sorted(spaces)
     pos = {nid: i for i, nid in enumerate(node_ids)}
     n = len(node_ids)
 
-    # --- incident aggregates (computed once)
-    tau_counts = np.zeros((n, 3), dtype=np.float32)
-    delta_counts = np.zeros((n, 3), dtype=np.float32)  # [out-restricted, in-restricted, both]
-    for e in g.edges:
-        iu, iv = pos[e.u], pos[e.v]
-        if level >= 2:
-            t = EDGE_TAUS.index(e.tau)
-            tau_counts[iu, t] += 1
-            tau_counts[iv, t] += 1
-        if level >= 3:
-            if e.delta == "both":
-                delta_counts[iu, 2] += 1
-                delta_counts[iv, 2] += 1
-            elif e.delta == "forward":  # u -> v only
-                delta_counts[iu, 0] += 1
-                delta_counts[iv, 1] += 1
-            elif e.delta == "backward":  # v -> u only
-                delta_counts[iu, 1] += 1
-                delta_counts[iv, 0] += 1
-
     # --- per-building standardization of centroids
     cents = np.array(
-        [spaces[nid].centroid if spaces[nid].centroid is not None else (0.0, 0.0) for nid in node_ids],
+        [
+            spaces[nid].centroid if spaces[nid].centroid is not None else (0.0, 0.0)
+            for nid in node_ids
+        ],
         dtype=np.float64,
     )
     c_mu = cents.mean(axis=0)
@@ -116,16 +108,10 @@ def featurize(
     c_sd[c_sd == 0] = 1.0
     cents = (cents - c_mu) / c_sd
 
-    blocks: list[np.ndarray] = []
-    geom = np.zeros((n, 3), dtype=np.float32)
-    for i, nid in enumerate(node_ids):
-        a = spaces[nid].area
-        geom[i, 0] = np.log1p(a) if a is not None else 0.0
-    geom[:, 1:] = cents.astype(np.float32)
-    blocks.append(geom)
+    blocks: list[np.ndarray] = [cents.astype(np.float32)]
 
     if level >= 1:
-        kind = np.zeros((n, 3), dtype=np.float32)
+        kind = np.zeros((n, 4), dtype=np.float32)
         lab = np.zeros((n, N_LABEL_BUCKETS), dtype=np.float32)
         for i, nid in enumerate(node_ids):
             nd = spaces[nid]
@@ -136,11 +122,43 @@ def featurize(
         blocks += [kind, lab]
 
     if level >= 2:
-        blocks.append(tau_counts)
+        door_counts = np.zeros((n, 4), dtype=np.float32)
+        for e in g.edges:
+            for a, b in ((e.u, e.v), (e.v, e.u)):
+                nd = spaces.get(b)
+                if nd is not None and nd.kind == "door":
+                    sub = nd.label if nd.label in DOOR_SUBTYPE_ORDER else None
+                    if sub is not None:
+                        door_counts[pos[a], DOOR_SUBTYPE_ORDER.index(sub)] += 1
+        blocks.append(door_counts)
+
     if level >= 3:
-        blocks.append(delta_counts)
+        meas = np.zeros((n, 5), dtype=np.float32)
+        for i, nid in enumerate(node_ids):
+            nd = spaces[nid]
+            meas[i, 0] = np.log1p(nd.area) if nd.area is not None else 0.0
+            meas[i, 1] = float(nd.attrs.get("eq_radius", 0.0))
+            meas[i, 2] = float(nd.attrs.get("inradius", 0.0))
+            meas[i, 3] = float(nd.attrs.get("n_subnodes", 0.0))
+            meas[i, 4] = float(nd.attrs.get("n_doors", 0.0))
+        blocks.append(meas)
 
     if level >= 4:
+        delta_counts = np.zeros((n, 3), dtype=np.float32)  # [out, in, both]
+        for e in g.edges:
+            iu, iv = pos[e.u], pos[e.v]
+            if e.delta == "both":
+                delta_counts[iu, 2] += 1
+                delta_counts[iv, 2] += 1
+            elif e.delta == "forward":  # u -> v only
+                delta_counts[iu, 0] += 1
+                delta_counts[iv, 1] += 1
+            elif e.delta == "backward":
+                delta_counts[iu, 1] += 1
+                delta_counts[iv, 0] += 1
+        blocks.append(delta_counts)
+
+    if level >= 5:
         zone = np.zeros((n, 1 + N_ZONE_BUCKETS + 1), dtype=np.float32)
         for i, nid in enumerate(node_ids):
             zid = g.ancestor_of_kind(nid, "zone")
@@ -153,27 +171,19 @@ def featurize(
 
     x = np.concatenate(blocks, axis=1)
 
-    # --- edges, direction-materialized
+    # --- edges: direction-materialized at T4+
     src, dst, eattrs = [], [], []
-
-    def _eattr(e) -> np.ndarray:
-        parts = []
-        if level >= 2:
-            t = np.zeros(3, dtype=np.float32)
-            t[EDGE_TAUS.index(e.tau)] = 1.0
-            parts.append(t)
-        if level >= 3:
-            d = np.zeros(3, dtype=np.float32)
-            d[("both", "forward", "backward").index(e.delta)] = 1.0
-            parts.append(d)
-        return np.concatenate(parts) if parts else np.zeros(0, dtype=np.float32)
-
+    de = edge_feature_dim(level)
     for e in g.edges:
         iu, iv = pos[e.u], pos[e.v]
-        fa = _eattr(e)
-        if level >= 3 and e.delta == "forward":
+        if de:
+            fa = np.zeros(3, dtype=np.float32)
+            fa[("both", "forward", "backward").index(e.delta)] = 1.0
+        else:
+            fa = np.zeros(0, dtype=np.float32)
+        if level >= 4 and e.delta == "forward":
             dirs = [(iu, iv)]
-        elif level >= 3 and e.delta == "backward":
+        elif level >= 4 and e.delta == "backward":
             dirs = [(iv, iu)]
         else:
             dirs = [(iu, iv), (iv, iu)]
@@ -183,11 +193,10 @@ def featurize(
             eattrs.append(fa)
 
     edge_index = np.array([src, dst], dtype=np.int64) if src else np.zeros((2, 0), np.int64)
-    de = edge_feature_dim(level)
     edge_attr = (
         np.stack(eattrs).astype(np.float32) if eattrs else np.zeros((0, de), np.float32)
     )
-    if edge_attr.shape[1] != de:  # zero-dim guard at low levels
+    if edge_attr.shape[1] != de:
         edge_attr = edge_attr.reshape(len(eattrs), de)
 
     if with_pe:

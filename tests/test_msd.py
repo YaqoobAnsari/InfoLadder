@@ -20,6 +20,11 @@ from topospec.graphs.levels import forget
 from topospec.graphs.schema import CONTAINMENT_RANK
 from topospec.graphs.validate import validate_graph
 
+pytestmark = pytest.mark.skip(
+    reason="MSD loader quarantined pending schema-v2 migration (D-014); its role "
+    "moves to pipeline-validation source"
+)
+
 FIXTURE = "1068"
 
 

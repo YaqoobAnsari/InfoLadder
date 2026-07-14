@@ -222,18 +222,20 @@ def extract_rooms(
         room_grid[room_ix == old] = k
     n_rooms = len(labels)
 
-    # nodes
+    # nodes. T0 (schema v2) carries centroids only; measured areas are T3 content,
+    # so this fallback/QA lane reports them via meta['room_area'] instead.
     scale = 1.0 / px_per_m if px_per_m else 1.0
     nodes: dict[str, Node] = {}
     room_ids = []
+    room_area: dict[str, float] = {}
     for k in range(n_rooms):
         m = room_grid == k
         ys, xs = np.nonzero(m)
         rid = f"s{k:03d}"
         room_ids.append(rid)
+        room_area[rid] = float(m.sum()) * scale * scale
         nodes[rid] = Node(
             id=rid,
-            area=float(m.sum()) * scale * scale,
             centroid=(float(xs.mean()) * scale, float(ys.mean()) * scale),
         )
 
@@ -286,6 +288,7 @@ def extract_rooms(
                 "adjacency_reach_px": reach,
                 "px_per_m": px_per_m,
             },
+            "room_area": room_area,  # T0 nodes carry no area (schema v2)
         },
     )
     stats = {

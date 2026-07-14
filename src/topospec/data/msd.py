@@ -1,4 +1,10 @@
-"""MSD (Modified Swiss Dwellings, ECCV 2024) loader -> SpectrumGraph (ROADMAP DATA-3).
+"""MSD (Modified Swiss Dwellings, ECCV 2024) loader — QUARANTINED (D-014).
+
+Schema v2 changed the tier ladder (T0..T5, doors-as-nodes, no edge taus); this
+loader still emits v1-shaped graphs and FAILS v2 validation. Its new role is
+VALIDATION SOURCE (MSD ground truth vs the raster->Tesseract pipeline), not tier
+factory; migration tracked in ROADMAP. Original docstring follows.
+
 
 MSD ships, per floor plan, a `networkx.Graph` whose nodes are the room *areas*
 (with polygon geometry, room type, centroid) and whose edges are ACCESS relations

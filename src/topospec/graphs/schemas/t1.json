@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://topofield.dev/schemas/spectrum/t1.json",
+  "title": "SpectrumGraph tier T1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "level",
+    "building_id",
+    "nodes",
+    "edges",
+    "containment",
+    "meta"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "level": {
+      "const": 1
+    },
+    "building_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "area",
+          "centroid",
+          "label",
+          "attrs"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "room",
+              "corridor",
+              "transition"
+            ]
+          },
+          "area": {
+            "type": "null"
+          },
+          "centroid": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "attrs": {
+            "type": "object",
+            "maxProperties": 0
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "u",
+          "v",
+          "delta"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "u": {
+            "type": "string"
+          },
+          "v": {
+            "type": "string"
+          },
+          "delta": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    "containment": {
+      "type": "object",
+      "maxProperties": 0
+    },
+    "meta": {
+      "type": "object"
+    }
+  }
+}

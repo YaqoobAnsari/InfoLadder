@@ -83,7 +83,7 @@ def surface_figure(cells: list[dict], out_path: Path) -> None:
             )
         ax.set_title(target, fontsize=10)
         ax.set_xticks(levels)
-        ax.set_xticklabels([f"R{lv}" for lv in levels])
+        ax.set_xticklabels([f"T{lv}" for lv in levels])
         if i % ncols == 0:
             ax.set_ylabel("I_V (nats)")
     for j in range(len(targets), nrows * ncols):
@@ -146,7 +146,7 @@ def control_figure(cells: list[dict], ctrl_tol: float, out_path: Path) -> bool:
                 )
         ax.set_title(f"{target} (must not rise above tolerance)", fontsize=9.5)
         ax.set_xticks(levels)
-        ax.set_xticklabels([f"R{lv}" for lv in levels])
+        ax.set_xticklabels([f"T{lv}" for lv in levels])
         if i == 0:
             ax.set_ylabel("I_V (nats)")
             ax.legend(frameon=False, fontsize=8.5, labelcolor=style.TEXT_SECONDARY)
@@ -225,13 +225,13 @@ def make_report(run_dir: Path, out_dir: Path) -> Path:
     for c in summary["checks"]:
         if c["kind"] == "saturation":
             detail = (
-                f"{c['target']} · {c['family']}: I_V@R{c['saturation_level']} = "
+                f"{c['target']} · {c['family']}: I_V@T{c['saturation_level']} = "
                 f"{c['i_v_at_saturation']:.3f} vs max below = {c['max_i_v_below']:.3f} "
                 f"(margin {c['margin']:g})"
             )
         else:
             detail = (
-                f"control {c['target']} · {c['family']} @R{c['level']}: "
+                f"control {c['target']} · {c['family']} @T{c['level']}: "
                 f"I_V = {c['i_v']:+.3f} (< tol, one-sided)"
             )
         lines.append(f"| {c['kind']} | {detail} | {'PASS' if c['ok'] else 'FAIL'} |")

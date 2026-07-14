@@ -1,30 +1,29 @@
-"""Tesseract2 navigable-graph JSON → SpectrumGraph R2 (user directive; plan §3.3).
+"""Tesseract2 navigation JSON → the T0..T3 free tiers (D-011, D-014; plan §3.3).
 
-Tesseract2 (github.com/YaqoobAnsari/Tesseract2 — the plan's R1 lineage, our own
-toolchain) parses annotated floorplan rasters with CRAFT text detection + Faster
-R-CNN door detection and emits a navigation graph JSON (`*_post_pruning.json` /
-`*_final_graph.json` with edges): rooms with geometry, room-interior subnodes,
-corridor waypoint meshes, TYPED door nodes (exit / room-to-corridor r2c /
-room-to-room r2r / corridor-to-corridor c2c), and outside connectors.
+Tesseract2 (github.com/YaqoobAnsari/Tesseract2 — the user's own pipeline and the
+tier engine of this project) parses annotated floorplan rasters with CRAFT text
+detection + Faster R-CNN door detection and emits a navigation graph JSON
+(`*_post_pruning.json`, or `*_pre_pruning.json` which additionally has `outside`
+connectors): rooms with geometry stats, room-interior subnodes, corridor waypoint
+meshes, TYPED door nodes (exit / r2c / r2r / c2c), and stairs/elevator transitions.
 
-This adapter contracts the navigation graph into the spectrum's space graph:
+This factory contracts the navigation graph into the richest FREE tier, T3, and
+`forget()` derives T2/T1/T0:
 
-  room_N               -> room node (area px^2, centroid, inradius attrs dropped)
-  room_N_subnode_M     -> contracted into parent room (navigation waypoints)
+  room_N               -> room node; T3 measures: area (px^2), eq_radius,
+                          inradius, n_subnodes, n_doors
+  room_N_subnode_M     -> contracted into parent room; count -> n_subnodes
   corridor_* mesh      -> connected components of the corridor-corridor subgraph,
-                          one corridor space node per component
-  *_door_N             -> door node (R1+); edge tau='door' on its space links
-  transition nodes     -> stairs/elevators: space nodes (kind 'room', label kept)
-                          — vertical circulation matters for Y_egress
-  corridor-room edge   -> direct open passage: space-space edge tau='corridor-link'
+                          one corridor space node per component; waypoint count
+                          -> n_subnodes (a corridor-extent proxy)
+  transition nodes     -> kind='transition' (stairs/elevators)
+  *_door_N             -> door node (T2+), label = subtype
+  corridor-room edge   -> direct open passage (edge without a door node)
   outside_* nodes      -> dropped; doors touching outside get label 'exit door'
-                          (fresh post_pruning exports fold outside away — feed
-                          pre_pruning if exit labels are needed)
+                          (only pre_pruning exports carry outside nodes)
 
-Output level is R2 (kinds + labels + edge taus are all known); R1/R0 come from
-forget(). Direction (R3) and containment (R4) are NOT derivable from Tesseract2
-output — those stay with the annotation lane. Positions/areas are in image
-pixels (px_per_m unknown); meta records provenance.
+Direction (T4) and containment (T5) are NOT derivable from Tesseract2 output —
+those are the manual annotation tiers. Positions/areas are in image pixels.
 """
 
 from __future__ import annotations
@@ -34,8 +33,11 @@ from pathlib import Path
 
 import numpy as np
 
+from topospec.graphs.levels import forget
 from topospec.graphs.schema import Edge, Node, SpectrumGraph
 from topospec.graphs.validate import validate_graph
+
+FREE_TIERS = (0, 1, 2, 3)
 
 
 class TesseractGraphError(ValueError):
@@ -48,8 +50,8 @@ def load_graph_json(path: str | Path) -> dict:
         raise TesseractGraphError(f"{path}: expected keys nodes/edges")
     if not g["edges"]:
         raise TesseractGraphError(
-            f"{path}: no edges — use the *_post_pruning.json / full navigation "
-            "export, not the summary *_final_graph.json"
+            f"{path}: no edges — use the *_post_pruning.json / *_pre_pruning.json "
+            "navigation export, not the summary *_final_graph.json"
         )
     return g
 
@@ -64,16 +66,14 @@ def _door_label(door_id: str) -> str:
     return "room-corridor door"
 
 
-def to_spectrum_graph(
-    tess: dict, building_id: str, source: str = ""
-) -> SpectrumGraph:
-    """Contract one Tesseract2 navigation graph into a SpectrumGraph at R2."""
+def to_t3(tess: dict, building_id: str, source: str = "") -> SpectrumGraph:
+    """Contract one Tesseract2 navigation graph into the T3 tier graph."""
     tnodes = {n["id"]: n for n in tess["nodes"]}
 
     # ---- space contraction maps ------------------------------------------------
-    # rooms: subnodes -> parent room id
     space_of: dict[str, str] = {}
     rooms: dict[str, dict] = {}
+    n_subnodes_of: dict[str, int] = {}
     for nid, n in tnodes.items():
         if n["type"] != "room":
             continue
@@ -82,16 +82,15 @@ def to_spectrum_graph(
             if parent is None or parent not in tnodes:
                 raise TesseractGraphError(f"subnode {nid}: missing parent_room_id")
             space_of[nid] = parent
+            n_subnodes_of[parent] = n_subnodes_of.get(parent, 0) + 1
         else:
             rooms[nid] = n
             space_of[nid] = nid
 
-    # transitions (stairs/elevators): standalone space nodes
     transitions = {nid: n for nid, n in tnodes.items() if n["type"] == "transition"}
     for nid in transitions:
         space_of[nid] = nid
 
-    # corridors: connected components of the corridor-corridor subgraph
     corridor_ids = [nid for nid, n in tnodes.items() if n["type"] == "corridor"]
     corridor_adj: dict[str, list[str]] = {nid: [] for nid in corridor_ids}
     for e in tess["edges"]:
@@ -118,7 +117,7 @@ def to_spectrum_graph(
     doors = {nid: n for nid, n in tnodes.items() if n["type"] == "door"}
     outside = {nid for nid, n in tnodes.items() if n["type"] == "outside"}
 
-    # ---- build nodes -------------------------------------------------------------
+    # ---- nodes -------------------------------------------------------------------
     nodes: dict[str, Node] = {}
     for rid, n in rooms.items():
         cen = n.get("room_centroid_xy") or n.get("position") or (0.0, 0.0)
@@ -128,11 +127,17 @@ def to_spectrum_graph(
             area=float(n["room_area_px"]) if n.get("room_area_px") else None,
             centroid=(float(cen[0]), float(cen[1])),
             label=str(n["label"]) if n.get("label") else None,
+            attrs={
+                "eq_radius": float(n.get("room_eq_radius") or 0.0),
+                "inradius": float(n.get("room_inradius") or 0.0),
+                "n_subnodes": int(n_subnodes_of.get(rid, 0)),
+                "n_doors": 0,  # filled after edge construction
+            },
         )
-    comp_positions: dict[int, list] = {}
+    comp_members: dict[int, list] = {}
     for nid, comp in corridor_comp.items():
-        comp_positions.setdefault(comp, []).append(tnodes[nid]["position"])
-    for comp, positions in sorted(comp_positions.items()):
+        comp_members.setdefault(comp, []).append(tnodes[nid]["position"])
+    for comp, positions in sorted(comp_members.items()):
         arr = np.asarray(positions, dtype=float)
         nodes[f"c{comp:03d}"] = Node(
             id=f"c{comp:03d}",
@@ -140,15 +145,17 @@ def to_spectrum_graph(
             area=None,
             centroid=(float(arr[:, 0].mean()), float(arr[:, 1].mean())),
             label="corridor",
+            attrs={"n_subnodes": len(positions), "n_doors": 0},
         )
     for tid, n in transitions.items():
         pos = n.get("position") or (0.0, 0.0)
         nodes[tid] = Node(
             id=tid,
-            kind="room",  # schema space kinds are room|door|corridor; label says what it is
+            kind="transition",
             area=None,
             centroid=(float(pos[0]), float(pos[1])),
-            label=str(n.get("label") or "transition (stairs/elevator)"),
+            label=str(n.get("label") or "stairs/elevator"),
+            attrs={"n_doors": 0},
         )
     for did, n in doors.items():
         pos = n.get("position") or (0.0, 0.0)
@@ -173,15 +180,6 @@ def to_spectrum_graph(
             continue
         if ts == "corridor" and tt == "corridor":
             continue  # contracted inside a corridor component
-        if ts == "room" and tt == "room":
-            # subnode<->parent / subnode<->subnode links contract away; a
-            # room-room edge across DIFFERENT spaces would be an open passage
-            a, b = space_of[s], space_of[t]
-            if a == b:
-                continue
-            key = (min(a, b), max(a, b))
-            edges.setdefault(key, Edge(u=key[0], v=key[1], tau="corridor-link"))
-            continue
         if "door" in (ts, tt) and ts != tt:
             door_id = s if ts == "door" else t
             other = t if ts == "door" else s
@@ -189,25 +187,32 @@ def to_spectrum_graph(
             if sp is None:
                 continue
             key = (min(door_id, sp), max(door_id, sp))
-            edges.setdefault(key, Edge(u=key[0], v=key[1], tau="door"))
+            edges.setdefault(key, Edge(u=key[0], v=key[1]))
             continue
-        if {"corridor", "room"} == {ts, tt}:
-            a, b = space_of[s], space_of[t]
-            key = (min(a, b), max(a, b))
-            edges.setdefault(key, Edge(u=key[0], v=key[1], tau="corridor-link"))
+        # space-space (room-room subnode links contract; cross-space = passage)
+        a, b = space_of.get(s), space_of.get(t)
+        if a is None or b is None or a == b:
+            continue
+        key = (min(a, b), max(a, b))
+        edges.setdefault(key, Edge(u=key[0], v=key[1]))
 
     for did in exit_doors:
         if did in nodes:
             nodes[did].label = "exit door"
 
-    # drop doors that ended up with no edges (e.g. only outside links on both sides)
+    # drop doors with no surviving edges; count doors per space
     connected = {e.u for e in edges.values()} | {e.v for e in edges.values()}
     for did in list(doors):
         if did in nodes and did not in connected:
             del nodes[did]
+    for e in edges.values():
+        for a, b in ((e.u, e.v), (e.v, e.u)):
+            if nodes.get(b) is not None and nodes[b].kind == "door":
+                if nodes.get(a) is not None and "n_doors" in nodes[a].attrs:
+                    nodes[a].attrs["n_doors"] += 1
 
     g = SpectrumGraph(
-        level=2,
+        level=3,
         building_id=building_id,
         nodes=nodes,
         edges=list(edges.values()),
@@ -216,14 +221,13 @@ def to_spectrum_graph(
             "source": "topospec.data.tesseract",
             "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
             "source_json": source,
-            "units": "image pixels (px_per_m unknown)",
+            "units": "image pixels",
             "n_rooms": len(rooms),
             "n_corridor_components": n_comp,
+            "n_transitions": len(transitions),
             "n_doors": len(doors),
             "n_exit_doors": len(exit_doors),
-            "n_subnodes_contracted": sum(
-                1 for n in tnodes.values() if n.get("is_subnode")
-            ),
+            "n_subnodes_contracted": sum(n_subnodes_of.values()),
             "n_outside_dropped": len(outside),
         },
     )
@@ -231,9 +235,22 @@ def to_spectrum_graph(
     return g
 
 
-def build_r2(json_path: str | Path, building_id: str | None = None) -> SpectrumGraph:
-    """One-call convenience: load a Tesseract2 export and adapt it to R2."""
+def build_t3(json_path: str | Path, building_id: str | None = None) -> SpectrumGraph:
+    """Load a Tesseract2 export and adapt it to the T3 tier."""
     path = Path(json_path)
     tess = load_graph_json(path)
     bid = building_id or f"tess:{path.stem.replace(' ', '_')}"
-    return to_spectrum_graph(tess, bid, source=str(path))
+    return to_t3(tess, bid, source=str(path))
+
+
+def build_tiers(
+    json_path: str | Path, building_id: str | None = None
+) -> dict[int, SpectrumGraph]:
+    """All four free tiers {3: T3, 2: T2, 1: T1, 0: T0} from one export."""
+    g3 = build_t3(json_path, building_id)
+    out = {3: g3}
+    for lvl in (2, 1, 0):
+        gk = forget(g3, lvl)
+        validate_graph(gk)
+        out[lvl] = gk
+    return out

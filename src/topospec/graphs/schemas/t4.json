@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://topofield.dev/schemas/spectrum/r4.json",
-  "title": "SpectrumGraph level R4",
+  "$id": "https://topofield.dev/schemas/spectrum/t4.json",
+  "title": "SpectrumGraph tier T4",
   "type": "object",
   "required": [
     "schema_version",
@@ -47,9 +47,7 @@
               "room",
               "door",
               "corridor",
-              "corridor-cluster",
-              "zone",
-              "wing"
+              "transition"
             ]
           },
           "area": {
@@ -89,7 +87,6 @@
         "required": [
           "u",
           "v",
-          "tau",
           "delta"
         ],
         "additionalProperties": false,
@@ -99,13 +96,6 @@
           },
           "v": {
             "type": "string"
-          },
-          "tau": {
-            "enum": [
-              "wall",
-              "door",
-              "corridor-link"
-            ]
           },
           "delta": {
             "enum": [
@@ -119,9 +109,7 @@
     },
     "containment": {
       "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
+      "maxProperties": 0
     },
     "meta": {
       "type": "object"

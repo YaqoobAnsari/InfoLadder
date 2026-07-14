@@ -72,7 +72,8 @@ def test_adjacency_is_chain_not_clique(extraction):
 
 
 def test_room_areas_reasonable(extraction):
-    areas = [n.area for n in extraction.graph.nodes.values()]
+    # schema v2: T0 nodes carry no area; the QA lane reports it via meta
+    areas = list(extraction.graph.meta["room_area"].values())
     assert all(abs(a - areas[0]) / areas[0] < 0.25 for a in areas)  # similar rooms
 
 
@@ -113,5 +114,5 @@ def test_rgba_and_scale_handling():
     )
     assert ex.stats["n_rooms"] == 3
     # 80x60 px rooms at 20 px/m -> 4m x 3m = 12 m^2 (loose: segmentation eats margins)
-    for n in ex.graph.nodes.values():
-        assert 6.0 < n.area < 20.0
+    for a in ex.graph.meta["room_area"].values():
+        assert 6.0 < a < 20.0

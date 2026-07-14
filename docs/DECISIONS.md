@@ -193,3 +193,39 @@ as a positive-leakage instrument control. Also per scout report: only the ~4,167
 plans are usable (test split withholds geometry — MSD is a generation benchmark);
 corpus tables updated. Full-corpus build (train.zip 4.76 GB → 4,167 plans) delegated,
 derivation via slurm.
+
+## 2026-07-14 — D-014: THE PIVOT — six Tesseract-native tiers T0–T5, raster-first, stage-gated
+
+**Context.** User course-correction: the project thesis is that floorplans are
+deliberately engineered encodings (crowding, thermal behavior, restricted access,
+egress logic are put INTO the drawing by convention) whose information is present but
+not bioavailable to models; graph tiers progressively unlock it. Therefore every tier
+must be DERIVED FROM THE RASTER through one real pipeline (Tesseract2 as engine), not
+assembled from datasets that ship graphs. Prior R0–R4 construction (morphology-first,
+dataset-direct loaders as tier factories) violated this and is superseded.
+
+**The six tiers (schema v2, levels 0–5):**
+  T0 skeleton: rooms + corridor-main + transition spaces, untyped, centroids kept;
+     undirected connectivity (rooms hang off corridor mains). FREE (forget of T2).
+  T1 named spaces: + node kinds (room/corridor/transition) + CRAFT text labels. FREE.
+  T2 Tesseract full structure: + door NODES with subtypes (r2r/r2c/c2c/exit). FREE.
+  T3 geometry-enriched: + measured node attrs (area, eq_radius, inradius, subnode
+     count, door count). FREE (Tesseract's own measurements surfaced).
+  T4 access control: + door directionality/restriction (delta). MANUAL (timed).
+  T5 organization: + zone/wing containment forest + outdoor marking. MANUAL (timed).
+Hot/crowded/thermal annotations are PREDICTION TARGETS and oracle-skyline material
+only — never representation content. Manual annotation tool = future TODO.
+
+**Stage gate.** Build T0–T3 at corpus scale (thousands of ACCURATE graphs, user-
+inspectable), run the probing grid on the four free tiers; only if an increasing
+information ordering is established do we invest manual hours in T4/T5.
+
+**Consequences.** Schema v2 (levels 0–5, 'transition' space kind, doors-as-nodes,
+numeric attrs at 3+, delta at 4+, containment at 5); forgetting maps rewritten;
+old modules migrate or are explicitly quarantined pending migration (msd loader,
+synthetic calibration ladder, featurization). Results tree rebuilt as
+results/corpora/<dataset>/<building>/{source.png,tiers/,overlays/,report.md}.
+Textless-raster lane (RoomFormer-class pseudo-labels -> Tesseract) is the scale
+path; MSD gets a render-to-raster lane so pipeline output can be validated against
+its shipped ground truth. Estimator/stats/probe machinery unchanged (representation-
+agnostic; calibration re-run on the new ladder is required before tier claims).

@@ -28,18 +28,20 @@ from topospec.probes.featurize import featurize, zone_secret_column
 from topospec.vinfo.estimator import estimate_cell
 from topospec.vinfo.mdl import prequential_codelength
 
-# families able to read each planted structure at/above its saturation level
+# families able to read each planted structure at/above its saturation tier
 READABLE_BY = {
-    "planted_degree": {"V4", "V5"},
-    "planted_tau": {"V2", "V3", "V4", "V5"},
-    "planted_delta": {"V2", "V3", "V4", "V5"},
-    "planted_zone": {"V0", "V2", "V3", "V4", "V5"},
+    "planted_degree": {"V4", "V5", "V6"},
+    "planted_label": {"V2", "V3", "V4", "V5", "V6"},
+    "planted_door": {"V2", "V3", "V4", "V5", "V6"},
+    "planted_attr": {"V2", "V3", "V4", "V5", "V6"},
+    "planted_delta": {"V2", "V3", "V4", "V5", "V6"},
+    "planted_zone": {"V0", "V2", "V3", "V4", "V5", "V6"},
 }
 
 SMOKE_OVERRIDES = {
     "n_buildings": 12,
-    "levels": [1, 2, 4],
-    "targets": ["planted_tau", "planted_zone", "planted_tau_ctrl"],
+    "levels": [1, 2, 5],
+    "targets": ["planted_door", "planted_zone", "planted_door_ctrl"],
     "families": ["V1", "V2"],
     "seeds": [0],
     "n_restarts": 1,
@@ -85,7 +87,7 @@ def _build_datasets(
 
 
 def _make_v0(target: str, level: int):
-    if target == "planted_zone" and level == 4:
+    if target == "planted_zone" and level == 5:
         col = zone_secret_column()
         return ReadoutFamily(lambda g, c=col: (g.x[:, c] > 0.5).astype(np.int64))
     return None
@@ -98,8 +100,8 @@ def run_calibration(
     if smoke:
         cfg = {**cfg, **SMOKE_OVERRIDES}
     seed = int(cfg["seed"])
-    levels = list(cfg.get("levels", [0, 1, 2, 3, 4]))
-    targets = list(cfg.get("targets", [*synthetic.PLANTED_TARGETS, "planted_tau_ctrl"]))
+    levels = list(cfg.get("levels", [0, 1, 2, 3, 4, 5]))
+    targets = list(cfg.get("targets", [*synthetic.PLANTED_TARGETS, "planted_door_ctrl"]))
     families = list(cfg.get("families", ["V1", "V2", "V3", "V4", "V5"]))
     seeds = list(cfg.get("seeds", [0, 1, 2]))
     n_restarts = int(cfg.get("n_restarts", 3))
@@ -177,7 +179,7 @@ def run_calibration(
                             )
                             rec["mdl"] = mdl.to_dict()
                         print(
-                            f"  cell L{level:<2} {target:<18} {fam_name:<3} s{s}: "
+                            f"  cell T{level:<2} {target:<18} {fam_name:<3} s{s}: "
                             f"I_V={est.i_v:+.3f} nats (H_V(Y)={est.h_y:.3f})",
                             flush=True,
                         )
@@ -191,7 +193,7 @@ def run_calibration(
                             "error": f"{type(exc).__name__}: {exc}"[:500],
                         }
                         print(
-                            f"  cell L{level:<2} {target:<18} {fam_name:<3} s{s}: "
+                            f"  cell T{level:<2} {target:<18} {fam_name:<3} s{s}: "
                             f"FAILED ({type(exc).__name__})",
                             flush=True,
                         )
@@ -320,7 +322,7 @@ def _print_report(report: dict) -> None:
             )
         else:
             print(
-                f"  [{flag}] {c['target']} {c['family']}: I_V@R{c['saturation_level']}="
+                f"  [{flag}] {c['target']} {c['family']}: I_V@T{c['saturation_level']}="
                 f"{c['i_v_at_saturation']:.3f} vs below-max {c['max_i_v_below']:.3f}"
             )
     print(f"=== calibration {'PASS' if report['pass'] else 'FAIL'} ===")
