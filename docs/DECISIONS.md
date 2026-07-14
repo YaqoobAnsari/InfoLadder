@@ -183,3 +183,13 @@ after fix; full run resubmitted. The FAILED run stays in the registry per protoc
 base rates vary: the analysis must report per-building-marginal controls (or a
 building-marginal-aware floor) alongside global H_V(Y) — noted for EXPERIMENT_PROTOCOL
 before B-1 configs are written.
+
+## 2026-07-14 — D-012 addendum: apartment zone mode is now the msd loader DEFAULT
+
+Scout question resolved: `zone_mode` defaults to 'apartment' in plan_to_graph and
+build_graphs so a default-built corpus can never silently carry the room-type-leaking
+category zones into Y_zone probing. 'category' stays available explicitly, documented
+as a positive-leakage instrument control. Also per scout report: only the ~4,167 TRAIN
+plans are usable (test split withholds geometry — MSD is a generation benchmark);
+corpus tables updated. Full-corpus build (train.zip 4.76 GB → 4,167 plans) delegated,
+derivation via slurm.

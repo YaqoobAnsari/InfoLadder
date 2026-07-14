@@ -24,8 +24,8 @@ docs/scout_reports/msd_2026-07-14.md):
     So a category-zone target leaks through the room-type label at every level.
     `zone_mode='apartment'` instead groups spaces into spatial units (access-graph
     components cut at entrance doors) — a grouping NOT recoverable from room type
-    alone, i.e. genuinely R4-exclusive. Default is 'category' per DATA-3; the
-    apartment grouping is recommended for the S9/zone probe (flagged to the lead).
+    alone, i.e. genuinely R4-exclusive. DEFAULT is 'apartment' (decision D-012);
+    'category' stays available as a documented positive-leakage control.
   * MSD ships no access DIRECTION and no per-apartment id in the graph.
 """
 
@@ -93,7 +93,7 @@ class MsdPlanError(ValueError):
     """A plan that cannot be turned into a valid graph (logged as an exclusion)."""
 
 
-def plan_to_graph(graph, native_id: str, zone_mode: str = "category") -> SpectrumGraph:
+def plan_to_graph(graph, native_id: str, zone_mode: str = "apartment") -> SpectrumGraph:
     """Build the richest (R4) SpectrumGraph from one MSD networkx plan (plan §4.1).
 
     `zone_mode`:
@@ -232,7 +232,7 @@ def _build_zones(
 def build_graphs(
     raw_dir: str | Path,
     out_dir: str | Path,
-    zone_mode: str = "category",
+    zone_mode: str = "apartment",
     limit: int | None = None,
 ) -> list[SpectrumGraph]:
     """Build + persist validated SpectrumGraphs for every MSD plan in raw_dir.
