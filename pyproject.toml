@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "topospec"
+version = "0.1.0"
+description = "T4 Representation Spectrum Study: usable-information measurement across floorplan graph representation levels R0-R4"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "TopoField / T4 thread" }]
+dependencies = [
+    "numpy",
+    "scipy",
+    "pandas",
+    "scikit-learn",
+    "statsmodels",
+    "networkx",
+    "shapely",
+    "pyyaml",
+    "jsonschema",
+    "tqdm",
+    "matplotlib",
+    "seaborn",
+    "torch",
+    "torch_geometric",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-cov", "ruff"]
+
+[project.scripts]
+topospec = "topospec.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"topospec.graphs" = ["schemas/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: long-running tests (probing end-to-end); run with -m slow",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "B", "NPY"]
+ignore = ["E501"]

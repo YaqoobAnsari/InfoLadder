@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(make test:*)",
+      "Bash(make lint:*)",
+      "Bash(make verify:*)",
+      "Bash(make calibrate-smoke:*)",
+      "Bash(/data1/yansari/.conda/envs/topofield/bin/python:*)",
+      "Bash(/data1/yansari/.conda/envs/topofield/bin/pytest:*)",
+      "Bash(/data1/yansari/.conda/envs/topofield/bin/pip list:*)",
+      "Bash(/data1/yansari/.conda/envs/topofield/bin/pip show:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(du:*)",
+      "Bash(md5sum:*)",
+      "Bash(sha256sum:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf data/raw:*)",
+      "Read(.env*)",
+      "Read(**/*credentials*)"
+    ]
+  },
+  "env": {
+    "TOPOSPEC_PYTHON": "/data1/yansari/.conda/envs/topofield/bin/python",
+    "PYTHONHASHSEED": "0"
+  }
+}

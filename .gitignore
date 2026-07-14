@@ -1,0 +1,42 @@
+# Data — never commit raw or derived corpora (large; licenses differ per dataset)
+data/raw/
+data/derived/
+data/labels/
+*.h5
+*.hdf5
+*.npz
+
+# Run outputs — manifests + registry are tracked, bulk artifacts are not
+runs/
+!runs/.gitkeep
+results/figures/*.png
+results/figures/*.pdf
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Local-only Claude Code settings (shared settings.json IS tracked)
+.claude/settings.local.json
+
+# LaTeX build
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*.synctex.gz

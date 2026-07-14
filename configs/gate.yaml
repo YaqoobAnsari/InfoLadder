@@ -1,0 +1,16 @@
+# Week-1 Gate feasibility triple (plan §6; ROADMAP G-a/G-b/G-c/G-d)
+# Runner not yet implemented — requires data lanes (docs/ROADMAP.md).
+experiment: gate
+seed: 20260714
+device: cpu
+
+rc_validation:            # G-a: ARI > 0.7 vs EnergyPlus on 3 IFC buildings
+  ifc_buildings: []       # fill at DATA-5
+  ari_threshold: 0.7
+annotation_timing:        # G-b: one institutional building R0->R4, <= 4 h
+  max_hours: 4.0
+smoke_probe:              # G-c: 50 Structured3D scenes end-to-end
+  dataset: structured3d
+  n_scenes: 50
+directed_balance:         # G-d: >= 100 directed instances across gold set
+  min_directed_instances: 100

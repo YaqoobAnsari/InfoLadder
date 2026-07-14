@@ -1,0 +1,29 @@
+# Documentation of the `topofield` conda env (already created on this host at
+# /data1/yansari/.conda/envs/topofield). To reproduce elsewhere:
+#   conda env create -f environment.yml && bash scripts/setup_env.sh
+# NOTE: this host is CPU-only; torch is installed from the CPU wheel index by
+# scripts/setup_env.sh. On a GPU host, install the matching CUDA torch wheel instead.
+name: topofield
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - numpy
+      - scipy
+      - pandas
+      - scikit-learn
+      - statsmodels
+      - networkx
+      - shapely
+      - pyyaml
+      - jsonschema
+      - tqdm
+      - matplotlib
+      - seaborn
+      - torch          # CPU wheel on this host; see scripts/setup_env.sh
+      - torch_geometric
+      - pytest
+      - pytest-cov
+      - ruff
