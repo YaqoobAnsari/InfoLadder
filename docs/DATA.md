@@ -18,13 +18,17 @@ moment a dataset lands (URL used, version/commit, date, checksum, license note).
 
 | Source | Scale & mix | Format / annotations | Access | Fit |
 |---|---|---|---|---|
-| **ArchCAD-400K** (arXiv 2503.22346, 2025) | 5,538 complete drawings from 11,917 industry drawings; **only 14% residential** — offices, industrial parks, large public buildings | vector CAD primitives with panoptic symbol annotations (56 classes: walls, doors, windows, stairs...); NO room/space polygons shipped | GitHub `ArchiAI-LAB/ArchCAD` (public subset released; license unstated — verify) | Best volume source for the institutional regime (S4). Requires a primitives→room-topology derivation step (shared with DATA-0 lane) |
-| **FloorPlanCAD** (ICCV 2021) | 15,000+ plans incl. schools, hospitals, malls, residential towers (100+ projects) | SVG vector, line-grained semantic+instance labels, 30+ classes | floorplancad.github.io + HuggingFace `Voxel51/FloorPlanCAD`; CC BY-NC 4.0 | Established, downloadable now; same rooms-from-primitives derivation need |
+| **ArchCAD-400K** (NeurIPS 2025, arXiv 2503.22346) | 413,062 chunks / 5,538 professional drawings (Arcplus ECADI) — offices/public/industrial; first release = 40K curated subset | SVG + parsed-JSON primitives, panoptic symbol labels; NO room polygons | 🔒 **GATED**: HF `jackluoluo/ArchCAD`, manual approval — **user must file the access request**; license = academic-use-only (sources inconsistent; pin at approval) | Highest-volume institutional source (S4); unlocks after approval |
+| **FloorPlanCAD** (ICCV 2021) | 15,663 drawings, ~1,200+ projects incl. parking garages, auditoria, hospitals, towers | annotated SVG, per-primitive `semanticId`/`instanceId` (accept BOTH `semanticId` and `semantic-id` spellings!), 35 classes: walls=33, curtain wall=34, railing=35, doors=1–6, windows=7–10, stairs/elevator/escalator=28–30 | ✅ **LANDED 2026-07-14**: val split (810 SVGs) + 25 samples at `data/raw/floorplancad_sample/` with sha256 manifest; train (85MB)/test (40MB) zips one command away (CADTransformer Drive mirrors). CC BY-NC 4.0 | **Adopt first** for rooms-from-primitives |
 
-Both ship wall/door **primitives**, not room graphs → one shared `drawing→SpectrumGraph`
-module (DATA-0) serves prelim rasters AND these CAD corpora. If room derivation proves
-robust on FloorPlanCAD's hospitals/schools, InstBuild stops being annotation-bound for
-R0–R2 and gold effort concentrates on R3/R4 only.
+Full access details, download commands, format dissection with literal primitive
+examples, and taxonomy: `docs/scout_reports/cad_datasets_2026-07-14.md`.
+
+**Derivation plan (DATA-7):** rasterize wall-class primitives (33/34/35) per sheet →
+run the SAME watershed lane as prelim rasters (`topospec.data.raster`) → R0; door
+primitives (1–6) then localize openings → R1/R2 semantics. One module serves both
+raster and CAD corpora. If robust on FloorPlanCAD's public buildings, InstBuild stops
+being annotation-bound for R0–R2 and gold effort concentrates on R3/R4 only.
 
 ## Acquisition notes
 

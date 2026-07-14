@@ -9,16 +9,21 @@ and the STATUS block as work completes. Task IDs are referenced from code
 
 - **Current week:** W1 (2026-07-14 – 2026-07-18)
 - **Active phase(s):** INFRA (complete) → GATE + A0 (submitted) + Phase A corpus work
-- **Submitted/running:** slurm job **7206** (full A0 calibration, `gpu2`, submitted
-  2026-07-14) — check `squeue -u yansari` / `runs/slurm-7206.out`; verdict lands in
-  `results/registry.jsonl` + `runs/<run_id>/summary.json`.
-- **Gates passed:** none yet (A0 SMOKE calibration PASS 2026-07-14; full A0 = job 7206)
-- **Data landed:** `data/raw/prelim_rasters/` (user-supplied, 2026-07-14): one real
-  institutional building (FF/LF/SF multi-sheet) + 10 residential plans — preliminary
-  pipeline testing + Gate-b candidate. See its README for duplicate-variant cautions.
-- **Blockers:** annotator availability (§14.3). InstBuild sourcing 🟡 partially
-  mitigated (prelim building + ArchCAD-400K/FloorPlanCAD scouting, DATA-7). Grid
-  runner needs `--shard N/M` before B-3.
+- **Submitted/running:** slurm jobs **7207** (full A0 calibration re-run; 7206 FAILED
+  on a degenerate-MDL-block crash, now fixed + regression-tested) and **7208** (DATA-0
+  prelim-raster batch ingest). Monitor: `squeue -u yansari`, `runs/slurm-<id>.out`.
+- **Gates passed:** none yet (A0 SMOKE calibration PASS 2026-07-14; full A0 = job 7207)
+- **Data landed:**
+  - `data/raw/prelim_rasters/` (user-supplied): one real institutional building
+    (FF/LF/SF multi-sheet) + 10 residential plans. Raster→R0 lane WORKING (validated
+    on FF part 1: all ~40 numbered rooms + corridors; QA overlays with the batch).
+  - `data/raw/floorplancad_sample/`: FloorPlanCAD val split (810 SVGs) + 25 dissected
+    samples + manifest — **access WORKS-NOW**; format spec + 35-class taxonomy in
+    `docs/scout_reports/cad_datasets_2026-07-14.md`. Includes large public buildings.
+- **Blockers:** annotator availability (§14.3). **ArchCAD-400K is gated — USER ACTION:
+  request access with a HuggingFace account on `jackluoluo/ArchCAD`** (license:
+  academic-use-only; record final terms in DECISIONS at approval). Grid runner needs
+  `--shard N/M` before B-3.
 - **Compute rule:** all experiments via `sbatch --mcs-label=morshed` on partition gpu2 —
   NEVER on the login node (docs/CLUSTER.md).
 - **Last updated:** 2026-07-14 (scaffold + tests live; slurm probed; A0 job submitted;
