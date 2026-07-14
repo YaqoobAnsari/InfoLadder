@@ -8,7 +8,6 @@ from topospec.data.tesseract import (
     TesseractGraphError,
     build_r2,
     load_graph_json,
-    to_spectrum_graph,
 )
 from topospec.graphs.levels import forget
 from topospec.graphs.validate import validate_graph
