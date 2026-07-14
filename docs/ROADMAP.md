@@ -54,10 +54,10 @@ and the STATUS block as work completes. Task IDs are referenced from code
 - [x] INFRA-5 Probe families V0–V5 + featurization interface + budget assertions
 - [x] INFRA-6 Run manifest + append-only registry + config-driven runner + CLI
 - [x] INFRA-7 Synthetic planted-target generators (edge-type / direction / containment)
-- [ ] INFRA-8 GraphGPS-style V6 probe (≤2M params) — needed by B-3. **Priority raised
-      2026-07-14:** the top of the capacity sweep is what makes "linear probes" a
-      non-issue for reviewers (plan §8: curves are read ACROSS V0–V6, never from one
-      probe); GPU MIG slices now available make it cheap to run.
+- [x] INFRA-8 GraphGPS-style V6 probe (2026-07-14): 4-layer local-MP + global-attention
+      hybrid, PE-consuming, ~460K params (cap 2M asserted at fit time), device-agnostic.
+      Tops the capacity sweep — the answer to "why should we trust probes" is that
+      curves are read ACROSS V0–V6, never from one probe (plan §8).
 - [x] INFRA-11 Results reporting layer (2026-07-14): `topospec/reporting/` +
       `scripts/make_reports.py` — every phase gets a tracked report.md + figures under
       `results/reports/` (calibration surface, controls, raster-ingest QA overlays).

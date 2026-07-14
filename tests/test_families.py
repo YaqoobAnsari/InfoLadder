@@ -23,10 +23,35 @@ def test_make_family_registry():
         make_family("V99")
 
 
-def test_v6_is_explicit_stub():
+def test_v6_within_param_budget():
+    """Plan §8: V6 GraphGPS-style transformer must stay <= 2M parameters."""
     fam = make_family("V6")
-    with pytest.raises(NotImplementedError, match="INFRA-8"):
-        fam.param_count(10, 2)
+    for dim in (3, 30, 100):
+        assert fam.param_count(dim, 2) <= fam.PARAM_CAP
+
+
+def test_v6_declared_params_match_torch(rng):
+    ds = _toy_dataset(rng, n_graphs=6, n_nodes=10)
+    tr, va, _te = _split(ds)
+    fam = make_family("V6")
+    fam.max_epochs, fam.patience = 2, 1
+    probe = fam.fit(tr, va, rng)
+    n_torch = sum(p.numel() for p in probe.model.parameters())
+    # toy edge_attr dim is 0, matching param_count's edge_dim=0 accounting
+    assert n_torch == fam.param_count(4, 2)
+    assert n_torch <= fam.PARAM_CAP
+
+
+@pytest.mark.slow
+def test_v6_learns_toy_signal(rng):
+    ds = _toy_dataset(rng, n_graphs=12, informative=True, noise=0.05)
+    tr, va, te = _split(ds)
+    from topospec.vinfo.estimator import estimate_cell
+
+    fam = make_family("V6")
+    fam.max_epochs = 120
+    est = estimate_cell(fam, tr, va, te, rng, n_restarts=1)
+    assert est.i_v > 0.3  # extracts most of the ~0.69 nats available
 
 
 def test_probabilities_are_valid(rng):

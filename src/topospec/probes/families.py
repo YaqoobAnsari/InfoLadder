@@ -368,16 +368,181 @@ class GNNFamily(ProbeFamily):
 
 
 class GraphGPSFamily(ProbeFamily):
-    """V6 — 4-layer GraphGPS-style transformer, <=2M params (plan §8)."""
+    """V6 — GraphGPS-style graph transformer, <=2M params (plan §8; INFRA-8).
+
+    Per layer, GPS-style hybrid: local edge-conditioned message passing (sum
+    aggregation, matching V4/V5) PLUS global multi-head self-attention over the
+    graph's nodes, combined residually with LayerNorms and an FFN. Positional
+    encodings: V6 CONSUMES the Laplacian-PE block (it is the transformer's
+    substitute for structural locality), unlike V4/V5 which strip it.
+    Architecture (layers/hidden/heads) is fixed across levels; only the input
+    projection varies with the level's feature dimension (fairness §4.4).
+    """
 
     name = "V6_graphgps"
     consumes_structure = True
+    PARAM_CAP = 2_000_000  # plan §8: <=2M parameters
+
+    def __init__(self, n_layers: int = 4, hidden: int = 64, heads: int = 4,
+                 ffn_mult: int = 4, lr: float = 1e-3, max_epochs: int = 300,
+                 patience: int = 30, device: str = "cpu"):
+        self.n_layers = n_layers
+        self.hidden = hidden
+        self.heads = heads
+        self.ffn_mult = ffn_mult
+        self.lr = lr
+        self.max_epochs = max_epochs
+        self.patience = patience
+        self.device = device
+
+    class _Fitted(FittedProbe):
+        def __init__(self, model, n_classes, device):
+            self.model, self.n_classes, self.device = model, n_classes, device
+
+        def predict_proba(self, ds: ProbeDataset) -> list[np.ndarray]:
+            import torch
+
+            self.model.eval()
+            out = []
+            with torch.no_grad():
+                for g in ds.graphs:
+                    logits = self.model(
+                        torch.from_numpy(g.x).to(self.device),
+                        torch.from_numpy(g.edge_index).to(self.device),
+                        torch.from_numpy(g.edge_attr).to(self.device),
+                    )
+                    out.append(
+                        torch.softmax(logits, dim=1).cpu().numpy().astype(np.float64)
+                    )
+            return out
+
+    def _build(self, in_dim: int, edge_dim: int, n_classes: int, seed: int):
+        import torch
+        import torch.nn as nn
+
+        torch.manual_seed(seed)
+        hidden, heads, ffn = self.hidden, self.heads, self.ffn_mult * self.hidden
+
+        class GPSLayer(nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.w_m = nn.Linear(hidden + edge_dim, hidden)
+                self.w_s = nn.Linear(hidden, hidden)
+                self.attn = nn.MultiheadAttention(hidden, heads, batch_first=True)
+                self.n1 = nn.LayerNorm(hidden)
+                self.n2 = nn.LayerNorm(hidden)
+                self.ffn = nn.Sequential(
+                    nn.Linear(hidden, ffn), nn.ReLU(), nn.Linear(ffn, hidden)
+                )
+
+            def forward(self, h, edge_index, edge_attr):
+                src, dst = edge_index[0], edge_index[1]
+                if src.numel() > 0:
+                    m = torch.relu(self.w_m(torch.cat([h[src], edge_attr], dim=1)))
+                    agg = torch.zeros_like(h)
+                    agg.index_add_(0, dst, m)  # SUM aggregation, like V4/V5
+                else:
+                    agg = torch.zeros_like(h)
+                local = self.w_s(h) + agg
+                glob, _ = self.attn(
+                    h.unsqueeze(0), h.unsqueeze(0), h.unsqueeze(0), need_weights=False
+                )
+                h = self.n1(h + local + glob.squeeze(0))
+                return self.n2(h + self.ffn(h))
+
+        class Net(nn.Module):
+            def __init__(self, n_layers):
+                super().__init__()
+                self.proj = nn.Linear(in_dim, hidden)
+                self.layers = nn.ModuleList(GPSLayer() for _ in range(n_layers))
+                self.head = nn.Linear(hidden, n_classes)
+
+            def forward(self, x, edge_index, edge_attr):
+                h = self.proj(x)
+                for layer in self.layers:
+                    h = layer(h, edge_index, edge_attr)
+                return self.head(h)
+
+        return Net(self.n_layers)
 
     def fit(self, train, val, rng):
-        raise NotImplementedError("V6 GraphGPS probe is ROADMAP task INFRA-8.")
+        import torch
+        import torch.nn as nn
+
+        sample = train.graphs[0]
+        in_dim = sample.x.shape[1]  # PE kept: V6 consumes the full feature block
+        edge_dim = sample.edge_attr.shape[1]
+        model = self._build(in_dim, edge_dim, train.n_classes, int(rng.integers(2**31)))
+        n_params = sum(p.numel() for p in model.parameters())
+        if n_params > self.PARAM_CAP:
+            raise ValueError(
+                f"V6 exceeds the plan §8 budget: {n_params} > {self.PARAM_CAP}"
+            )
+        device = torch.device(self.device)
+        model.to(device)
+        opt = torch.optim.AdamW(model.parameters(), lr=self.lr, weight_decay=1e-4)
+        lossf = nn.CrossEntropyLoss()
+
+        def tensors(ds):
+            return [
+                (
+                    torch.from_numpy(g.x).to(device),
+                    torch.from_numpy(g.edge_index).to(device),
+                    torch.from_numpy(g.edge_attr).to(device),
+                    torch.from_numpy(y.astype(np.int64)).to(device),
+                )
+                for g, y in zip(ds.graphs, ds.labels, strict=True)
+            ]
+
+        tr, va = tensors(train), tensors(val)
+        best_val, best_state, since = np.inf, None, 0
+        for _epoch in range(self.max_epochs):
+            model.train()
+            opt.zero_grad()
+            losses = []
+            for x, ei, ea, y in tr:
+                m = y >= 0
+                if m.sum() == 0:
+                    continue
+                losses.append(lossf(model(x, ei, ea)[m], y[m]))
+            torch.stack(losses).mean().backward()
+            opt.step()
+
+            model.eval()
+            with torch.no_grad():
+                tot, cnt = 0.0, 0
+                for x, ei, ea, y in va:
+                    m = y >= 0
+                    if m.sum() == 0:
+                        continue
+                    tot += float(
+                        nn.functional.cross_entropy(
+                            model(x, ei, ea)[m], y[m], reduction="sum"
+                        )
+                    )
+                    cnt += int(m.sum())
+                vce = tot / max(cnt, 1)
+            if vce < best_val - 1e-5:
+                best_val, since = vce, 0
+                best_state = {k: v.clone() for k, v in model.state_dict().items()}
+            else:
+                since += 1
+                if since >= self.patience:
+                    break
+        if best_state is not None:
+            model.load_state_dict(best_state)
+        return self._Fitted(model, train.n_classes, device)
 
     def param_count(self, input_dim, n_classes):
-        raise NotImplementedError("V6 GraphGPS probe is ROADMAP task INFRA-8.")
+        h, ffn = self.hidden, self.ffn_mult * self.hidden
+        per_layer = (
+            (h + 0 + 1) * h  # w_m (edge dim documented separately in manifests)
+            + (h + 1) * h  # w_s
+            + 4 * (h + 1) * h  # MHA in/out projections
+            + 2 * (2 * h)  # two LayerNorms
+            + (h + 1) * ffn + (ffn + 1) * h  # FFN
+        )
+        return (input_dim + 1) * h + self.n_layers * per_layer + (h + 1) * n_classes
 
 
 # ------------------------------------------------------------------------ registry
