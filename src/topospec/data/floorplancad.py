@@ -386,10 +386,12 @@ def rasterize_walls(
 ) -> np.ndarray:
     """Render only boundary-class primitives as dark ink on a white raster.
 
-    FloorPlanCAD walls are thin face-lines, so they are stroked a few pixels wide
-    (`wall_stroke_px`) to form solid barriers that `extract_rooms` can close over,
-    while door gaps in the wall geometry stay open. Returns an (H, W) uint8 array
-    (0 = ink, 255 = white); SVG y (downward) maps directly to image rows.
+    FloorPlanCAD walls are thin (often double-line) face-lines, so they are stroked
+    a few pixels wide (`wall_stroke_px`) to form solid barriers that `extract_rooms`
+    can close over. Walls run continuously through doorways (doors are separate
+    symbols), so this render seals rooms; `build_r0` re-opens doorways afterwards.
+    Returns an (H, W) uint8 array (0 = ink, 255 = white); SVG y (downward) maps
+    directly to image rows.
 
     `primitives` may be a `ParsedSvg` (its viewBox is used) or a bare primitive
     list (pass `viewbox`, else bounds are taken from the boundary geometry).
@@ -429,6 +431,8 @@ def build_r0(
     svg_path: str | Path,
     px_per_unit: float = 10.0,
     wall_stroke_px: int = 3,
+    punch_doors: bool = True,
+    door_gap_px: int | None = None,
     **extract_kwargs,
 ) -> RasterExtraction:
     """FloorPlanCAD SVG -> validated R0 SpectrumGraph via the raster lane (DATA-7).
@@ -438,6 +442,15 @@ def build_r0(
     positions in raster coordinates as `door_hints` for the future R1/R2 opening
     step (this lane emits R0 only). `building_id` is `fpcad:<stem>`; provenance and
     `px_per_unit` are stamped into the graph meta.
+
+    Door-gap punching (`punch_doors`, ON by default): FloorPlanCAD walls run
+    CONTINUOUSLY through doorways — the door is a separate symbol (classes 1..6),
+    not a gap — so a walls-only raster seals every room and yields zero R0
+    connectivity. R0's E_conn edge IS the "connected by an opening" relation, so we
+    breach the wall at each door instance (a `door_gap_px`-radius hole at the door
+    centroid) before segmentation. This is R0 semantics (which rooms share an
+    opening), NOT R1/R2 (door nodes / edge taus), which stay deferred. This differs
+    from the prelim-raster lane, where door gaps are already drawn in the source.
 
     Morphology defaults differ from the raster lane's: this raster contains ONLY
     boundary strokes (no furniture/text to reject), so the wall-opening step is
@@ -451,9 +464,17 @@ def build_r0(
     wall_img = rasterize_walls(parsed, px_per_unit, wall_stroke_px=wall_stroke_px)
     stem = Path(svg_path).stem
 
+    minx, miny, _, _ = parsed.viewbox
+    if door_gap_px is None:
+        door_gap_px = max(wall_stroke_px + 3, int(round(0.7 * px_per_unit)))
+    n_punched = 0
+    if punch_doors:
+        wall_img, n_punched = _punch_door_openings(
+            wall_img, parsed, minx, miny, px_per_unit, door_gap_px
+        )
+
     ex = extract_rooms(wall_img, building_id=f"fpcad:{stem}", **extract_kwargs)
 
-    minx, miny, _, _ = parsed.viewbox
     door_hints = _door_hints(parsed, minx, miny, px_per_unit)
     n_wall = sum(1 for p in parsed.primitives if p.semantic_id in BOUNDARY_CLASSES)
 
@@ -462,6 +483,9 @@ def build_r0(
         "source_svg": stem,
         "px_per_unit": px_per_unit,
         "wall_stroke_px": wall_stroke_px,
+        "punch_doors": punch_doors,
+        "door_gap_px": door_gap_px,
+        "n_door_openings_punched": n_punched,
         "viewbox": list(parsed.viewbox),
         "n_primitives": len(parsed.primitives),
         "n_wall_primitives": n_wall,
@@ -472,6 +496,54 @@ def build_r0(
     ex.stats["n_door_hints"] = len(door_hints)
     ex.stats["n_wall_primitives"] = n_wall
     return ex
+
+
+def _punch_door_openings(
+    wall_img: np.ndarray,
+    parsed: ParsedSvg,
+    minx: float,
+    miny: float,
+    px_per_unit: float,
+    gap_px: int,
+) -> tuple[np.ndarray, int]:
+    """Clear a `gap_px`-radius white disk at each door-instance centroid.
+
+    Breaches the continuous wall at each doorway so adjacent rooms connect through
+    an opening (R0 E_conn). One punch per door instance; loose (uninstanced) door
+    primitives are punched individually. Returns (image, n_punched).
+    """
+    by_inst: dict[int, list[SvgPrimitive]] = {}
+    loose: list[SvgPrimitive] = []
+    for p in parsed.primitives:
+        if p.semantic_id not in DOOR_CLASSES:
+            continue
+        (by_inst.setdefault(p.instance_id, []) if p.instance_id >= 0 else loose).append(p)
+
+    img = Image.fromarray(wall_img)
+    draw = ImageDraw.Draw(img)
+    n = 0
+
+    def _punch(prims: list[SvgPrimitive]) -> None:
+        nonlocal n
+        pts = np.concatenate([q.points() for q in prims if q.points().size] or [np.zeros((0, 2))])
+        if pts.size == 0:
+            return
+        # clear the door instance's bounding box (expanded by gap_px) so the wall
+        # is breached at the opening regardless of where the swing arc's centroid
+        # falls; door bboxes are opening-sized so this over-clears very little
+        xs = (pts[:, 0] - minx) * px_per_unit
+        ys = (pts[:, 1] - miny) * px_per_unit
+        draw.rectangle(
+            [xs.min() - gap_px, ys.min() - gap_px, xs.max() + gap_px, ys.max() + gap_px],
+            fill=255,
+        )
+        n += 1
+
+    for prims in by_inst.values():
+        _punch(prims)
+    for p in loose:
+        _punch([p])
+    return np.asarray(img, dtype=np.uint8), n
 
 
 def _door_hints(

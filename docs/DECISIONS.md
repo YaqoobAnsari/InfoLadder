@@ -109,3 +109,22 @@ with DATA-0). FloorPlanCAD first (accessible now, license clear), ArchCAD-400K s
 **Consequences.** If derivation works, the institutional regime gets silver-corpus
 volume and InstBuild gold effort concentrates on R3/R4 annotation only — a material
 de-risk for the paper's headline S4 analysis.
+
+## 2026-07-14 — D-010: FloorPlanCAD = parser + machinery source, NOT the institutional corpus; corpus bet moves to ArchCAD-400K + primary loaders
+
+**Context.** DATA-7 prototype (delegated agent) found two format facts beyond the
+scout report: (a) FloorPlanCAD walls run CONTINUOUSLY through doorways (doors are
+separate symbols) — solved by door-gap punching in `build_r0`, which is legitimately
+R0 semantics ("connected by an opening"); (b) EVERY val sheet is a 140×140-unit crop
+of a larger building — an exhaustive 810-sheet search found zero self-contained
+multi-room plans, so rooms-from-primitives on raw sheets yields fragments (interiors
+leak off-sheet; verified on the committed fixture 0402-0048).
+**Decision.** Keep and commit the parser/rasterizer lane (`topospec/data/floorplancad.py`)
+— it is the template for ANY labeled-vector source and already yields door positions
+for R1/R2. Do NOT invest in sheet-stitching now. The institutional-volume bet moves to
+ArchCAD-400K (self-contained professional drawings; access request pending) and the
+plan's primary corpora (Structured3D/CubiCasa/MSD loaders, DATA-1..3, which ship
+vector annotations and need no extraction). Revisit stitching only if ArchCAD access
+is denied AND the primary corpora leave the institutional regime under-powered.
+**Consequences.** DATA-7 partially closed (parser ✅, corpus ❌ for now); MSD loader
+(DATA-3) promoted to next data task (shipped zone labels = near-R4 at zero cost).
