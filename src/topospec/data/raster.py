@@ -74,6 +74,7 @@ def extract_rooms(
     split_erosion_px: int | None = None,
     min_room_px: int = 400,
     adjacency_reach_px: int | None = None,
+    merge_interface_dist: float = 10.0,
     building_id: str = "raster:unknown",
     px_per_m: float | None = None,
 ) -> RasterExtraction:
@@ -89,6 +90,9 @@ def extract_rooms(
             Must exceed the widest door half-gap or doors won't split spaces.
             None (default) = AUTO-TUNE: sweep DEFAULT_SPLIT_CANDIDATES as r_min
             and keep the value yielding the most sanely-sized rooms.
+        merge_interface_dist: adjacent regions whose contact interface has
+            median distance-to-wall above this (px) are fragments of one space
+            and get merged; genuine door interfaces hug the wall (1-2px).
         min_room_px: components smaller than this are absorbed into neighbors.
         adjacency_reach_px: max gap for wall-adjacency counting
             (default: 2*wall_open_px + 4).
@@ -187,6 +191,27 @@ def extract_rooms(
     # unpad everything back to the source image frame
     room_ix = best_grid[pad:-pad, pad:-pad]
     wall = wall[pad:-pad, pad:-pad]
+    dist = dist[pad:-pad, pad:-pad]
+
+    # ---- graph-correctness passes (added after FF-sheet QA showed the raw
+    # watershed output is NOT a usable building graph). ORDER MATTERS:
+    # 1. big-void removal FIRST: outdoor courtyards read as huge, poorly wall-
+    #    enclosed regions (FF part 1: courtyard 30x median area at 0.80 enclosure
+    #    vs rooms 0.92-0.98). Removing them BEFORE merging stops corridors from
+    #    being merged into the outdoors through open passages.
+    room_ix, void_stats = _remove_voids(room_ix, wall, enclosure_any=0.0)
+    # 2. fragment merging: pieces of the SAME space meet across open floor
+    #    (interface median dist-to-wall ~23-25px) while genuine door connections
+    #    hug the wall gap (~1-2px). Area guard: two LARGE spaces joined by a wide
+    #    doorless opening (hall <-> open-plan room) stay separate nodes.
+    room_ix, n_merged = _merge_open_interfaces(room_ix, dist, merge_interface_dist)
+    # 3. sliver cleanup AFTER merging (pre-merge, room fragments legitimately
+    #    have open boundaries and would be misread as barely-enclosed voids).
+    room_ix, sliver_stats = _remove_voids(
+        room_ix, wall, area_factor=np.inf, enclosure_any=0.5
+    )
+    void_stats["n_voids_removed"] += sliver_stats["n_voids_removed"]
+    void_stats["void_area_px"] += sliver_stats["void_area_px"]
 
     # absorb tiny fragments into their most-contacted neighbor
     room_ix = _absorb_small(room_ix, min_room_px)
@@ -269,6 +294,8 @@ def extract_rooms(
         "n_adjacent_wall_only": n_wallonly,
         "split_erosion_px_used": split_used,
         "split_auto_scores": scores,
+        "n_fragment_merges": n_merged,
+        **{k: v for k, v in void_stats.items() if k != "voids"},
         "interior_px": int((room_grid >= 0).sum()),
         "wall_px": int(wall.sum()),
         "image_shape": [gray.shape[0] - 2 * pad, gray.shape[1] - 2 * pad],
@@ -305,6 +332,104 @@ def _union_box(
         )
         for d in (0, 1)
     )
+
+
+def _remove_voids(
+    room_ix: np.ndarray,
+    wall: np.ndarray,
+    area_factor: float = 10.0,
+    enclosure_big: float = 0.85,
+    enclosure_any: float = 0.5,
+) -> tuple[np.ndarray, dict]:
+    """Drop outdoor/void regions: huge + poorly wall-enclosed, or barely enclosed.
+
+    Enclosure = fraction of a region's boundary pixels having wall within 3px.
+    Void if (area > area_factor * median AND enclosure < enclosure_big) OR
+    enclosure < enclosure_any. Thresholds measured on FF part 1 (courtyard: 30x
+    median at 0.80; rooms 0.92-0.98; corridors ~0.77 but only ~7x median; edge
+    slivers 0.33-0.45)."""
+    from scipy import ndimage as ndi
+
+    out = room_ix.copy()
+    labels = [int(v) for v in np.unique(out) if v > 0]
+    if not labels:
+        return out, {"n_voids_removed": 0, "void_area_px": 0}
+    areas = {v: int((out == v).sum()) for v in labels}
+    med = float(np.median(list(areas.values())))
+    wall_near = ndi.binary_dilation(wall, structure=_disk(3))
+    removed, removed_area = [], 0
+    for v in labels:
+        m = out == v
+        boundary = m & ~ndi.binary_erosion(m)
+        if not boundary.any():
+            continue
+        enclosure = float(wall_near[boundary].mean())
+        is_void = (areas[v] > area_factor * med and enclosure < enclosure_big) or (
+            enclosure < enclosure_any
+        )
+        if is_void:
+            out[m] = 0
+            removed.append({"area_px": areas[v], "enclosure": round(enclosure, 3)})
+            removed_area += areas[v]
+    return out, {
+        "n_voids_removed": len(removed),
+        "void_area_px": removed_area,
+        "voids": removed,
+    }
+
+
+def _merge_open_interfaces(
+    room_ix: np.ndarray, dist: np.ndarray, threshold: float
+) -> tuple[np.ndarray, int]:
+    """Union regions whose contact interface lies in open floor (far from walls).
+
+    For every 4-adjacent pixel pair belonging to two different regions, collect
+    the distance-to-wall; pairs with median above `threshold` are fragments of
+    one space (a genuine doorway interface hugs the wall ends instead). Area
+    guard: if BOTH regions exceed 2x the median area they are real spaces joined
+    by a wide doorless opening (hall <-> open-plan room) and are NOT merged."""
+    labels, counts = np.unique(room_ix[room_ix > 0], return_counts=True)
+    if labels.size == 0:
+        return room_ix, 0
+    area = dict(zip(labels.tolist(), counts.tolist(), strict=True))
+    guard = 2.0 * float(np.median(counts))
+    pair_vals: dict[tuple[int, int], list[float]] = {}
+    for axis in (0, 1):
+        sl_a = (np.s_[:-1, :], np.s_[:, :-1])[axis]
+        a = room_ix[sl_a]
+        b = (room_ix[1:, :], room_ix[:, 1:])[axis]
+        d = dist[sl_a]
+        m = (a > 0) & (b > 0) & (a != b)
+        for pa, pb, dv in zip(a[m].tolist(), b[m].tolist(), d[m].tolist(), strict=True):
+            key = (pa, pb) if pa < pb else (pb, pa)
+            pair_vals.setdefault(key, []).append(dv)
+
+    parent: dict[int, int] = {}
+
+    def find(x: int) -> int:
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    n_merged = 0
+    for (pa, pb), vals in pair_vals.items():
+        if min(area[pa], area[pb]) > guard:
+            continue  # two large spaces with a wide opening: keep both nodes
+        if float(np.median(vals)) > threshold:
+            ra, rb = find(pa), find(pb)
+            if ra != rb:
+                parent[rb] = ra
+                n_merged += 1
+    if n_merged:
+        out = room_ix.copy()
+        for v in [int(x) for x in np.unique(room_ix) if x > 0]:
+            r = find(v)
+            if r != v:
+                out[room_ix == v] = r
+        return out, n_merged
+    return room_ix, 0
 
 
 def _absorb_small(room_ix: np.ndarray, min_px: int) -> np.ndarray:
