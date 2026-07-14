@@ -4,45 +4,34 @@
  "building_id": "prelim:FF_part_6up",
  "nodes": [
   {
-   "id": "c000",
+   "id": "corridor_main_1",
    "kind": null,
    "area": null,
    "centroid": [
-    931.5866084425037,
-    611.7321688500728
+    1346.5,
+    150.5
    ],
    "label": null,
    "attrs": {}
   },
   {
-   "id": "c001",
+   "id": "corridor_main_2",
    "kind": null,
    "area": null,
    "centroid": [
-    1358.875,
-    195.875
+    83.75,
+    452.0
    ],
    "label": null,
    "attrs": {}
   },
   {
-   "id": "c002",
+   "id": "corridor_main_3",
    "kind": null,
    "area": null,
    "centroid": [
-    1475.0,
-    165.0
-   ],
-   "label": null,
-   "attrs": {}
-  },
-  {
-   "id": "c003",
-   "kind": null,
-   "area": null,
-   "centroid": [
-    1453.3333333333333,
-    200.0
+    897.0,
+    689.5
    ],
    "label": null,
    "attrs": {}
@@ -270,133 +259,108 @@
  ],
  "edges": [
   {
-   "u": "c000",
-   "v": "c001",
+   "u": "corridor_main_1",
+   "v": "corridor_main_3",
    "delta": null
   },
   {
-   "u": "c000",
-   "v": "c002",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "c003",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_10",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_11",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_12",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_14",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_15",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_17",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_18",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_19",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_2",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_20",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_21",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_22",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_3",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_5",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_7",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_8",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_9",
-   "delta": null
-  },
-  {
-   "u": "c001",
-   "v": "c002",
-   "delta": null
-  },
-  {
-   "u": "c001",
-   "v": "c003",
-   "delta": null
-  },
-  {
-   "u": "c001",
-   "v": "room_4",
-   "delta": null
-  },
-  {
-   "u": "c002",
-   "v": "c003",
-   "delta": null
-  },
-  {
-   "u": "c002",
+   "u": "corridor_main_1",
    "v": "room_1",
    "delta": null
   },
   {
-   "u": "c002",
+   "u": "corridor_main_1",
+   "v": "room_11",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_1",
+   "v": "room_12",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_1",
+   "v": "room_14",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_1",
+   "v": "room_4",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_1",
    "v": "room_6",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_1",
+   "v": "room_7",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_1",
+   "v": "room_8",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "corridor_main_3",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_10",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_15",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_17",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_19",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_20",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_3",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_5",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_9",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_3",
+   "v": "room_18",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_3",
+   "v": "room_21",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_3",
+   "v": "room_22",
    "delta": null
   },
   {
@@ -414,14 +378,17 @@
  "meta": {
   "source": "topospec.data.tesseract",
   "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
-  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/FF part 6up/FF part 6up_post_pruning.json",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/FF part 6up/FF part 6up_pre_pruning.json",
   "units": "image pixels",
   "n_rooms": 20,
-  "n_corridor_components": 4,
+  "n_corridor_mains": 3,
+  "n_corridor_fallback_components": 0,
   "n_transitions": 0,
-  "n_doors": 21,
+  "n_doors": 27,
   "n_exit_doors": 2,
   "n_subnodes_contracted": 120,
-  "n_outside_dropped": 13
+  "n_waypoints_contracted": 1898,
+  "n_outside_dropped": 80,
+  "text_labels_joined": true
  }
 }

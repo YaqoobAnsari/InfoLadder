@@ -4,45 +4,23 @@
  "building_id": "prelim:FF_part_7up",
  "nodes": [
   {
-   "id": "c000",
+   "id": "corridor_main_1",
    "kind": null,
    "area": null,
    "centroid": [
-    616.1038961038961,
-    336.6233766233766
+    1370.0,
+    148.0
    ],
    "label": null,
    "attrs": {}
   },
   {
-   "id": "c001",
+   "id": "corridor_main_2",
    "kind": null,
    "area": null,
    "centroid": [
-    1223.4285714285713,
-    254.0408163265306
-   ],
-   "label": null,
-   "attrs": {}
-  },
-  {
-   "id": "c002",
-   "kind": null,
-   "area": null,
-   "centroid": [
-    1590.0,
-    526.6666666666666
-   ],
-   "label": null,
-   "attrs": {}
-  },
-  {
-   "id": "c003",
-   "kind": null,
-   "area": null,
-   "centroid": [
-    540.0,
-    80.0
+    512.0,
+    194.0
    ],
    "label": null,
    "attrs": {}
@@ -215,93 +193,83 @@
  ],
  "edges": [
   {
-   "u": "c000",
-   "v": "room_1",
+   "u": "corridor_main_1",
+   "v": "corridor_main_2",
    "delta": null
   },
   {
-   "u": "c000",
-   "v": "room_11",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_13",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_15",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_17",
-   "delta": null
-  },
-  {
-   "u": "c001",
-   "v": "c002",
-   "delta": null
-  },
-  {
-   "u": "c001",
-   "v": "room_12",
-   "delta": null
-  },
-  {
-   "u": "c001",
+   "u": "corridor_main_1",
    "v": "room_14",
    "delta": null
   },
   {
-   "u": "c001",
-   "v": "room_18",
-   "delta": null
-  },
-  {
-   "u": "c001",
+   "u": "corridor_main_1",
    "v": "room_2",
    "delta": null
   },
   {
-   "u": "c001",
-   "v": "room_4",
-   "delta": null
-  },
-  {
-   "u": "c001",
-   "v": "room_5",
-   "delta": null
-  },
-  {
-   "u": "c001",
-   "v": "room_6",
-   "delta": null
-  },
-  {
-   "u": "c001",
+   "u": "corridor_main_1",
    "v": "room_7",
    "delta": null
   },
   {
-   "u": "c001",
+   "u": "corridor_main_1",
    "v": "room_8",
    "delta": null
   },
   {
-   "u": "c001",
+   "u": "corridor_main_1",
    "v": "room_9",
    "delta": null
   },
   {
-   "u": "c002",
-   "v": "room_14",
+   "u": "corridor_main_2",
+   "v": "room_1",
    "delta": null
   },
   {
-   "u": "c003",
-   "v": "room_1",
+   "u": "corridor_main_2",
+   "v": "room_11",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_12",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_13",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_15",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_2",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_4",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_5",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_6",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_9",
    "delta": null
   },
   {
@@ -324,14 +292,17 @@
  "meta": {
   "source": "topospec.data.tesseract",
   "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
-  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/FF part 7up/FF part 7up_post_pruning.json",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/FF part 7up/FF part 7up_pre_pruning.json",
   "units": "image pixels",
   "n_rooms": 15,
-  "n_corridor_components": 4,
+  "n_corridor_mains": 2,
+  "n_corridor_fallback_components": 0,
   "n_transitions": 0,
-  "n_doors": 11,
+  "n_doors": 14,
   "n_exit_doors": 5,
-  "n_subnodes_contracted": 127,
-  "n_outside_dropped": 55
+  "n_subnodes_contracted": 138,
+  "n_waypoints_contracted": 1094,
+  "n_outside_dropped": 336,
+  "text_labels_joined": true
  }
 }

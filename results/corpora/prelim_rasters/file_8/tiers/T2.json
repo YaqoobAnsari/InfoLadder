@@ -4,14 +4,14 @@
  "building_id": "prelim:file_8",
  "nodes": [
   {
-   "id": "c000",
+   "id": "corridor_main_1",
    "kind": "corridor",
    "area": null,
    "centroid": [
-    254.66666666666666,
-    198.66666666666666
+    160.0,
+    298.0
    ],
-   "label": "corridor",
+   "label": "hall",
    "attrs": {}
   },
   {
@@ -55,7 +55,7 @@
     346.0,
     77.0
    ],
-   "label": null,
+   "label": "1006",
    "attrs": {}
   },
   {
@@ -66,7 +66,7 @@
     109.0,
     84.0
    ],
-   "label": null,
+   "label": "1002",
    "attrs": {}
   },
   {
@@ -77,23 +77,23 @@
     407.0,
     271.0
    ],
-   "label": null,
+   "label": "1001",
    "attrs": {}
   }
  ],
  "edges": [
   {
-   "u": "c000",
+   "u": "corridor_main_1",
    "v": "r2c_door_1",
    "delta": null
   },
   {
-   "u": "c000",
+   "u": "corridor_main_1",
    "v": "r2c_door_2",
    "delta": null
   },
   {
-   "u": "c000",
+   "u": "corridor_main_1",
    "v": "r2c_door_3",
    "delta": null
   },
@@ -117,14 +117,17 @@
  "meta": {
   "source": "topospec.data.tesseract",
   "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
-  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/file_8/file_8_post_pruning.json",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/file_8/file_8_pre_pruning.json",
   "units": "image pixels",
   "n_rooms": 3,
-  "n_corridor_components": 1,
+  "n_corridor_mains": 1,
+  "n_corridor_fallback_components": 0,
   "n_transitions": 0,
   "n_doors": 3,
   "n_exit_doors": 0,
   "n_subnodes_contracted": 0,
-  "n_outside_dropped": 0
+  "n_waypoints_contracted": 134,
+  "n_outside_dropped": 37,
+  "text_labels_joined": true
  }
 }

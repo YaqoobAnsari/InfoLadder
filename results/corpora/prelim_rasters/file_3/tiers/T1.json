@@ -4,14 +4,14 @@
  "building_id": "prelim:file_3",
  "nodes": [
   {
-   "id": "c000",
+   "id": "corridor_main_1",
    "kind": "corridor",
    "area": null,
    "centroid": [
-    358.06451612903226,
-    627.0967741935484
+    414.0,
+    578.0
    ],
-   "label": "corridor",
+   "label": "hall",
    "attrs": {}
   },
   {
@@ -22,7 +22,7 @@
     631.0,
     135.0
    ],
-   "label": null,
+   "label": "1006",
    "attrs": {}
   },
   {
@@ -33,7 +33,7 @@
     633.0,
     305.0
    ],
-   "label": null,
+   "label": "1005",
    "attrs": {}
   },
   {
@@ -44,7 +44,7 @@
     334.0,
     366.0
    ],
-   "label": null,
+   "label": "1004",
    "attrs": {}
   },
   {
@@ -55,7 +55,7 @@
     153.0,
     514.0
    ],
-   "label": null,
+   "label": "1001",
    "attrs": {}
   },
   {
@@ -66,7 +66,7 @@
     618.0,
     787.0
    ],
-   "label": null,
+   "label": "1003",
    "attrs": {}
   },
   {
@@ -77,28 +77,28 @@
     197.0,
     794.0
    ],
-   "label": null,
+   "label": "1002",
    "attrs": {}
   }
  ],
  "edges": [
   {
-   "u": "c000",
+   "u": "corridor_main_1",
    "v": "room_3",
    "delta": null
   },
   {
-   "u": "c000",
+   "u": "corridor_main_1",
    "v": "room_4",
    "delta": null
   },
   {
-   "u": "c000",
+   "u": "corridor_main_1",
    "v": "room_5",
    "delta": null
   },
   {
-   "u": "c000",
+   "u": "corridor_main_1",
    "v": "room_6",
    "delta": null
   },
@@ -117,14 +117,17 @@
  "meta": {
   "source": "topospec.data.tesseract",
   "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
-  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/file_3/file_3_post_pruning.json",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/file_3/file_3_pre_pruning.json",
   "units": "image pixels",
   "n_rooms": 6,
-  "n_corridor_components": 1,
+  "n_corridor_mains": 1,
+  "n_corridor_fallback_components": 0,
   "n_transitions": 0,
   "n_doors": 6,
   "n_exit_doors": 0,
   "n_subnodes_contracted": 0,
-  "n_outside_dropped": 0
+  "n_waypoints_contracted": 115,
+  "n_outside_dropped": 211,
+  "text_labels_joined": true
  }
 }

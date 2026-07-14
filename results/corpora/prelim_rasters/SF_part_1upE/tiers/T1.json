@@ -4,58 +4,58 @@
  "building_id": "prelim:SF_part_1upE",
  "nodes": [
   {
-   "id": "c000",
+   "id": "corridor_main_1",
    "kind": "corridor",
    "area": null,
    "centroid": [
-    944.4061962134251,
-    1010.0774526678141
+    469.0,
+    223.0
    ],
-   "label": "corridor",
+   "label": "hall",
    "attrs": {}
   },
   {
-   "id": "c001",
+   "id": "corridor_main_2",
    "kind": "corridor",
    "area": null,
    "centroid": [
-    1748.0833333333333,
-    739.75
+    177.5,
+    405.5
    ],
-   "label": "corridor",
+   "label": "hall",
    "attrs": {}
   },
   {
-   "id": "c002",
+   "id": "corridor_main_3",
    "kind": "corridor",
    "area": null,
    "centroid": [
-    470.0,
-    200.0
+    1427.0,
+    680.5
    ],
-   "label": "corridor",
+   "label": "hall",
    "attrs": {}
   },
   {
-   "id": "c003",
+   "id": "corridor_main_4",
    "kind": "corridor",
    "area": null,
    "centroid": [
-    190.0,
-    415.0
+    1220.0,
+    735.0
    ],
-   "label": "corridor",
+   "label": "hall",
    "attrs": {}
   },
   {
-   "id": "c004",
+   "id": "corridor_main_5",
    "kind": "corridor",
    "area": null,
    "centroid": [
-    250.0,
-    400.0
+    1757.0,
+    737.0
    ],
-   "label": "corridor",
+   "label": "hall",
    "attrs": {}
   },
   {
@@ -66,7 +66,7 @@
     1579.0,
     1377.0
    ],
-   "label": "stairs/elevator",
+   "label": "elevator",
    "attrs": {}
   },
   {
@@ -77,7 +77,7 @@
     385.3166777621619,
     116.15576842468624
    ],
-   "label": null,
+   "label": "1001",
    "attrs": {}
   },
   {
@@ -88,7 +88,7 @@
     525.34527649094,
     626.8128774995602
    ],
-   "label": null,
+   "label": "1016",
    "attrs": {}
   },
   {
@@ -99,7 +99,7 @@
     208.52145116057045,
     730.1336595262247
    ],
-   "label": null,
+   "label": "1006",
    "attrs": {}
   },
   {
@@ -110,7 +110,7 @@
     525.6498022796,
     729.7813444987206
    ],
-   "label": null,
+   "label": "1017",
    "attrs": {}
   },
   {
@@ -121,7 +121,7 @@
     1616.9183094384707,
     840.6037435284748
    ],
-   "label": null,
+   "label": "1036",
    "attrs": {}
   },
   {
@@ -132,7 +132,7 @@
     208.74819376998698,
     833.2209522681511
    ],
-   "label": null,
+   "label": "1007",
    "attrs": {}
   },
   {
@@ -143,7 +143,7 @@
     525.2353530590593,
     833.1119886832488
    ],
-   "label": null,
+   "label": "1018",
    "attrs": {}
   },
   {
@@ -154,7 +154,7 @@
     1152.8893668059059,
     810.2634655417236
    ],
-   "label": null,
+   "label": "1029",
    "attrs": {}
   },
   {
@@ -165,7 +165,7 @@
     208.3716050122909,
     936.1951555848672
    ],
-   "label": null,
+   "label": "1008",
    "attrs": {}
   },
   {
@@ -176,7 +176,7 @@
     525.3748236953455,
     935.9064997649272
    ],
-   "label": null,
+   "label": "1019",
    "attrs": {}
   },
   {
@@ -187,7 +187,7 @@
     1634.0216975829117,
     960.7792017987633
    ],
-   "label": null,
+   "label": "1037",
    "attrs": {}
   },
   {
@@ -198,7 +198,7 @@
     525.7522171459285,
     312.9703305563021
    ],
-   "label": null,
+   "label": "1013",
    "attrs": {}
   },
   {
@@ -209,7 +209,7 @@
     525.0921301775148,
     1038.9008284023669
    ],
-   "label": null,
+   "label": "1020",
    "attrs": {}
   },
   {
@@ -220,7 +220,7 @@
     208.5428333134755,
     1039.0167401405934
    ],
-   "label": null,
+   "label": "1009",
    "attrs": {}
   },
   {
@@ -231,7 +231,7 @@
     1633.6380985227338,
     1064.5099729838478
    ],
-   "label": null,
+   "label": "1038",
    "attrs": {}
   },
   {
@@ -242,7 +242,7 @@
     1271.1602367156731,
     1108.4332020537354
    ],
-   "label": null,
+   "label": "1028",
    "attrs": {}
   },
   {
@@ -253,7 +253,7 @@
     525.5869065262942,
     1148.6959677007205
    ],
-   "label": null,
+   "label": "1021",
    "attrs": {}
   },
   {
@@ -264,7 +264,7 @@
     208.64246242834272,
     1148.4829313639416
    ],
-   "label": null,
+   "label": "1010",
    "attrs": {}
   },
   {
@@ -275,7 +275,7 @@
     1633.6475672581569,
     1167.666914710933
    ],
-   "label": null,
+   "label": "1039",
    "attrs": {}
   },
   {
@@ -286,7 +286,7 @@
     1633.5662810107638,
     1270.7841478155758
    ],
-   "label": null,
+   "label": "1040",
    "attrs": {}
   },
   {
@@ -297,7 +297,7 @@
     540.4026910496581,
     1267.9151798988999
    ],
-   "label": null,
+   "label": "022",
    "attrs": {}
   },
   {
@@ -308,7 +308,7 @@
     217.08484068456937,
     1324.1422359816336
    ],
-   "label": null,
+   "label": "101",
    "attrs": {}
   },
   {
@@ -319,7 +319,7 @@
     1425.6225756990532,
     421.0065077191381
    ],
-   "label": null,
+   "label": "1031",
    "attrs": {}
   },
   {
@@ -330,7 +330,7 @@
     680.7139084981409,
     1317.5934148838712
    ],
-   "label": null,
+   "label": "1024",
    "attrs": {}
   },
   {
@@ -341,7 +341,7 @@
     788.102413915513,
     1317.564075257366
    ],
-   "label": null,
+   "label": "1025",
    "attrs": {}
   },
   {
@@ -352,7 +352,7 @@
     891.7288235294118,
     1317.661294117647
    ],
-   "label": null,
+   "label": "1026",
    "attrs": {}
   },
   {
@@ -363,7 +363,7 @@
     1039.2255734919286,
     1318.7572748513169
    ],
-   "label": null,
+   "label": "1027",
    "attrs": {}
   },
   {
@@ -374,7 +374,7 @@
     533.4729646885728,
     1370.0008582638548
    ],
-   "label": null,
+   "label": "1023",
    "attrs": {}
   },
   {
@@ -385,7 +385,7 @@
     525.5495772482706,
     420.31011647844855
    ],
-   "label": null,
+   "label": "1014",
    "attrs": {}
   },
   {
@@ -396,7 +396,7 @@
     1100.218924202457,
     473.1482828386304
    ],
-   "label": null,
+   "label": "1030",
    "attrs": {}
   },
   {
@@ -407,7 +407,7 @@
     1741.9661306245214,
     453.07918846356114
    ],
-   "label": null,
+   "label": "1032",
    "attrs": {}
   },
   {
@@ -418,7 +418,7 @@
     208.48957520347864,
     519.854164343851
    ],
-   "label": null,
+   "label": "1004",
    "attrs": {}
   },
   {
@@ -429,7 +429,7 @@
     525.612179865455,
     523.301192021716
    ],
-   "label": null,
+   "label": "1015",
    "attrs": {}
   },
   {
@@ -440,7 +440,7 @@
     208.51183325324362,
     626.461737145603
    ],
-   "label": null,
+   "label": "1005",
    "attrs": {}
   },
   {
@@ -451,7 +451,7 @@
     233.5,
     338.5
    ],
-   "label": "stairs/elevator",
+   "label": "stairs",
    "attrs": {}
   },
   {
@@ -462,219 +462,219 @@
     1804.0,
     802.0
    ],
-   "label": "stairs/elevator",
+   "label": "stairs",
    "attrs": {}
   }
  ],
  "edges": [
   {
-   "u": "c000",
-   "v": "c001",
+   "u": "corridor_main_1",
+   "v": "corridor_main_2",
    "delta": null
   },
   {
-   "u": "c000",
-   "v": "c002",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "c003",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "c004",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "elevator_1",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_10",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_11",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_12",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_13",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_14",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_15",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_16",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_17",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_18",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_19",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_2",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_20",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_21",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_22",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_23",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_24",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_25",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_26",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_27",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_28",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_29",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_3",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_30",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_31",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_32",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_33",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_34",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_4",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_5",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_6",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_7",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_8",
-   "delta": null
-  },
-  {
-   "u": "c000",
-   "v": "room_9",
-   "delta": null
-  },
-  {
-   "u": "c001",
-   "v": "stairs_2",
-   "delta": null
-  },
-  {
-   "u": "c002",
+   "u": "corridor_main_1",
    "v": "room_1",
    "delta": null
   },
   {
-   "u": "c003",
-   "v": "c004",
+   "u": "corridor_main_1",
+   "v": "room_2",
    "delta": null
   },
   {
-   "u": "c004",
+   "u": "corridor_main_1",
+   "v": "room_4",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "corridor_main_4",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_10",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_11",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_12",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_14",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_15",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_17",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_18",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_20",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_21",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_24",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_25",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_28",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_29",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_34",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_7",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_8",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_9",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
    "v": "stairs_1",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_3",
+   "v": "corridor_main_4",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_3",
+   "v": "corridor_main_5",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_3",
+   "v": "room_13",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_3",
+   "v": "room_19",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_3",
+   "v": "room_26",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_3",
+   "v": "room_27",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_3",
+   "v": "room_3",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_3",
+   "v": "room_6",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_4",
+   "v": "corridor_main_5",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_4",
+   "v": "room_16",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_4",
+   "v": "room_23",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_4",
+   "v": "room_30",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_4",
+   "v": "room_31",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_4",
+   "v": "room_32",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_4",
+   "v": "room_33",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_4",
+   "v": "room_5",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_5",
+   "v": "elevator_1",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_5",
+   "v": "room_22",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_5",
+   "v": "stairs_2",
    "delta": null
   }
  ],
@@ -682,14 +682,17 @@
  "meta": {
   "source": "topospec.data.tesseract",
   "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
-  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/SF part 1upE/SF part 1upE_post_pruning.json",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/SF part 1upE/SF part 1upE_pre_pruning.json",
   "units": "image pixels",
   "n_rooms": 34,
-  "n_corridor_components": 5,
+  "n_corridor_mains": 5,
+  "n_corridor_fallback_components": 0,
   "n_transitions": 3,
-  "n_doors": 38,
-  "n_exit_doors": 0,
+  "n_doors": 40,
+  "n_exit_doors": 1,
   "n_subnodes_contracted": 198,
-  "n_outside_dropped": 0
+  "n_waypoints_contracted": 1328,
+  "n_outside_dropped": 528,
+  "text_labels_joined": true
  }
 }

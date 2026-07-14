@@ -1,0 +1,586 @@
+{
+ "schema_version": "2.0.0",
+ "level": 3,
+ "building_id": "prelim:FF_part_8up",
+ "nodes": [
+  {
+   "id": "c2c_door_1",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    91.0,
+    799.0
+   ],
+   "label": "corridor-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "corridor_main_1",
+   "kind": "corridor",
+   "area": null,
+   "centroid": [
+    235.0,
+    187.5
+   ],
+   "label": "hall",
+   "attrs": {
+    "n_subnodes": 509,
+    "n_doors": 4
+   }
+  },
+  {
+   "id": "corridor_main_2",
+   "kind": "corridor",
+   "area": null,
+   "centroid": [
+    645.0,
+    566.5
+   ],
+   "label": "hall",
+   "attrs": {
+    "n_subnodes": 638,
+    "n_doors": 5
+   }
+  },
+  {
+   "id": "exit_door_1",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    705.0,
+    708.0
+   ],
+   "label": "exit door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_1",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    622.0,
+    215.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_2",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    549.0,
+    261.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_3",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    1091.0,
+    247.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_4",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    120.0,
+    405.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_5",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    280.0,
+    385.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_6",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    1126.0,
+    282.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "r2c_door_7",
+   "kind": "door",
+   "area": null,
+   "centroid": [
+    92.0,
+    588.0
+   ],
+   "label": "room-corridor door",
+   "attrs": {}
+  },
+  {
+   "id": "room_1",
+   "kind": "room",
+   "area": 4971.0,
+   "centroid": [
+    1411.3150271575137,
+    108.8404747535707
+   ],
+   "label": "6",
+   "attrs": {
+    "eq_radius": 39.778366535337064,
+    "inradius": 13.27869987487793,
+    "n_subnodes": 0,
+    "n_doors": 0
+   }
+  },
+  {
+   "id": "room_10",
+   "kind": "room",
+   "area": 15269.0,
+   "centroid": [
+    379.8620734822189,
+    441.56663828672475
+   ],
+   "label": "1179",
+   "attrs": {
+    "eq_radius": 69.71566288962833,
+    "inradius": 45.29930114746094,
+    "n_subnodes": 5,
+    "n_doors": 0
+   }
+  },
+  {
+   "id": "room_11",
+   "kind": "room",
+   "area": 15030.0,
+   "centroid": [
+    282.16526946107786,
+    473.1787092481703
+   ],
+   "label": "1180",
+   "attrs": {
+    "eq_radius": 69.16789420925271,
+    "inradius": 42.43431854248047,
+    "n_subnodes": 5,
+    "n_doors": 1
+   }
+  },
+  {
+   "id": "room_12",
+   "kind": "room",
+   "area": 33135.0,
+   "centroid": [
+    129.41291685528896,
+    504.1346612343443
+   ],
+   "label": "1181",
+   "attrs": {
+    "eq_radius": 102.69955247565544,
+    "inradius": 54.43504333496094,
+    "n_subnodes": 9,
+    "n_doors": 1
+   }
+  },
+  {
+   "id": "room_13",
+   "kind": "room",
+   "area": 14105.0,
+   "centroid": [
+    965.1792272243886,
+    553.8615384615384
+   ],
+   "label": "68",
+   "attrs": {
+    "eq_radius": 67.00567845057886,
+    "inradius": 26.016706466674805,
+    "n_subnodes": 2,
+    "n_doors": 0
+   }
+  },
+  {
+   "id": "room_14",
+   "kind": "room",
+   "area": 9760.0,
+   "centroid": [
+    1568.8714139344263,
+    672.4277663934427
+   ],
+   "label": "64",
+   "attrs": {
+    "eq_radius": 55.73781919983771,
+    "inradius": 31.514999389648438,
+    "n_subnodes": 2,
+    "n_doors": 0
+   }
+  },
+  {
+   "id": "room_16",
+   "kind": "room",
+   "area": 151485.0,
+   "centroid": [
+    1133.2904379971615,
+    697.3324949664983
+   ],
+   "label": "1167",
+   "attrs": {
+    "eq_radius": 219.58864521771505,
+    "inradius": 118.3005599975586,
+    "n_subnodes": 41,
+    "n_doors": 0
+   }
+  },
+  {
+   "id": "room_17",
+   "kind": "room",
+   "area": 150656.0,
+   "centroid": [
+    1877.8457811172473,
+    617.0762332731521
+   ],
+   "label": "1162",
+   "attrs": {
+    "eq_radius": 218.98697270135767,
+    "inradius": 59.42062759399414,
+    "n_subnodes": 34,
+    "n_doors": 0
+   }
+  },
+  {
+   "id": "room_18",
+   "kind": "room",
+   "area": 72024.0,
+   "centroid": [
+    396.9088775963568,
+    904.1603909807842
+   ],
+   "label": "1185",
+   "attrs": {
+    "eq_radius": 151.41318054416973,
+    "inradius": 89.77011108398438,
+    "n_subnodes": 17,
+    "n_doors": 0
+   }
+  },
+  {
+   "id": "room_19",
+   "kind": "room",
+   "area": null,
+   "centroid": [
+    24.0,
+    965.0
+   ],
+   "label": "189",
+   "attrs": {
+    "eq_radius": 0.0,
+    "inradius": 0.0,
+    "n_subnodes": 0,
+    "n_doors": 2
+   }
+  },
+  {
+   "id": "room_2",
+   "kind": "room",
+   "area": 16272.0,
+   "centroid": [
+    888.2413962635202,
+    102.17195181907572
+   ],
+   "label": "1173",
+   "attrs": {
+    "eq_radius": 71.96901046966424,
+    "inradius": 43.8176155090332,
+    "n_subnodes": 3,
+    "n_doors": 0
+   }
+  },
+  {
+   "id": "room_3",
+   "kind": "room",
+   "area": 15332.0,
+   "centroid": [
+    813.2650665275241,
+    176.28672058439864
+   ],
+   "label": "1174",
+   "attrs": {
+    "eq_radius": 69.85933849507794,
+    "inradius": 42.03401565551758,
+    "n_subnodes": 4,
+    "n_doors": 0
+   }
+  },
+  {
+   "id": "room_4",
+   "kind": "room",
+   "area": 56689.0,
+   "centroid": [
+    1179.1023126179682,
+    266.05311436081075
+   ],
+   "label": "1172",
+   "attrs": {
+    "eq_radius": 134.33044754586695,
+    "inradius": 49.53363037109375,
+    "n_subnodes": 11,
+    "n_doors": 1
+   }
+  },
+  {
+   "id": "room_5",
+   "kind": "room",
+   "area": 15342.0,
+   "centroid": [
+    735.388932342589,
+    242.53949941337504
+   ],
+   "label": "1175",
+   "attrs": {
+    "eq_radius": 69.88211698161209,
+    "inradius": 39.983612060546875,
+    "n_subnodes": 5,
+    "n_doors": 0
+   }
+  },
+  {
+   "id": "room_6",
+   "kind": "room",
+   "area": 168071.0,
+   "centroid": [
+    1483.9033384700513,
+    321.27301557080045
+   ],
+   "label": "1165",
+   "attrs": {
+    "eq_radius": 231.2977753477017,
+    "inradius": 150.20864868164062,
+    "n_subnodes": 49,
+    "n_doors": 0
+   }
+  },
+  {
+   "id": "room_7",
+   "kind": "room",
+   "area": 15247.0,
+   "centroid": [
+    652.5116416344199,
+    302.5554535318423
+   ],
+   "label": "1176",
+   "attrs": {
+    "eq_radius": 69.66542065217332,
+    "inradius": 38.34041213989258,
+    "n_subnodes": 4,
+    "n_doors": 1
+   }
+  },
+  {
+   "id": "room_8",
+   "kind": "room",
+   "area": 15369.0,
+   "centroid": [
+    565.5932721712538,
+    355.9727373283883
+   ],
+   "label": "1177",
+   "attrs": {
+    "eq_radius": 69.94358184107159,
+    "inradius": 43.403316497802734,
+    "n_subnodes": 5,
+    "n_doors": 1
+   }
+  },
+  {
+   "id": "room_9",
+   "kind": "room",
+   "area": 15201.0,
+   "centroid": [
+    474.14716137096246,
+    402.4802315637129
+   ],
+   "label": "1178",
+   "attrs": {
+    "eq_radius": 69.5602514362894,
+    "inradius": 43.8176155090332,
+    "n_subnodes": 5,
+    "n_doors": 0
+   }
+  }
+ ],
+ "edges": [
+  {
+   "u": "c2c_door_1",
+   "v": "corridor_main_2",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_1",
+   "v": "corridor_main_2",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_1",
+   "v": "r2c_door_2",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_1",
+   "v": "r2c_door_4",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_1",
+   "v": "r2c_door_5",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_1",
+   "v": "r2c_door_7",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_1",
+   "v": "room_9",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "exit_door_1",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "r2c_door_1",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "r2c_door_3",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "r2c_door_6",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_1",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_10",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_13",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_14",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_16",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_17",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_18",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_2",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_3",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_5",
+   "delta": null
+  },
+  {
+   "u": "corridor_main_2",
+   "v": "room_6",
+   "delta": null
+  },
+  {
+   "u": "exit_door_1",
+   "v": "room_19",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_1",
+   "v": "room_7",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_2",
+   "v": "room_8",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_3",
+   "v": "room_4",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_4",
+   "v": "room_12",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_5",
+   "v": "room_11",
+   "delta": null
+  },
+  {
+   "u": "r2c_door_7",
+   "v": "room_19",
+   "delta": null
+  }
+ ],
+ "containment": {},
+ "meta": {
+  "source": "topospec.data.tesseract",
+  "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/FF part 8up/FF part 8up_pre_pruning.json",
+  "units": "image pixels",
+  "n_rooms": 18,
+  "n_corridor_mains": 2,
+  "n_corridor_fallback_components": 0,
+  "n_transitions": 0,
+  "n_doors": 10,
+  "n_exit_doors": 2,
+  "n_subnodes_contracted": 201,
+  "n_waypoints_contracted": 1147,
+  "n_outside_dropped": 268,
+  "text_labels_joined": true
+ }
+}

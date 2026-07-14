@@ -1,0 +1,2 @@
+fresh (batch 7215)
+source: /data1/yansari/PhD/topofield/Tesseract2/Results/Json/FF part 8up/FF part 8up_pre_pruning.json

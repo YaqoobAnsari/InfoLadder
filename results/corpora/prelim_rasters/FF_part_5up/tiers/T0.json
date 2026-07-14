@@ -4,23 +4,12 @@
  "building_id": "prelim:FF_part_5up",
  "nodes": [
   {
-   "id": "c000",
+   "id": "corridor_main_1",
    "kind": null,
    "area": null,
    "centroid": [
-    920.0,
-    40.0
-   ],
-   "label": null,
-   "attrs": {}
-  },
-  {
-   "id": "c001",
-   "kind": null,
-   "area": null,
-   "centroid": [
-    377.14285714285717,
-    309.42857142857144
+    144.0,
+    321.0
    ],
    "label": null,
    "attrs": {}
@@ -72,27 +61,22 @@
  ],
  "edges": [
   {
-   "u": "c000",
-   "v": "room_4",
-   "delta": null
-  },
-  {
-   "u": "c001",
+   "u": "corridor_main_1",
    "v": "room_1",
    "delta": null
   },
   {
-   "u": "c001",
+   "u": "corridor_main_1",
    "v": "room_2",
    "delta": null
   },
   {
-   "u": "c001",
+   "u": "corridor_main_1",
    "v": "room_4",
    "delta": null
   },
   {
-   "u": "c001",
+   "u": "corridor_main_1",
    "v": "room_5",
    "delta": null
   }
@@ -101,14 +85,17 @@
  "meta": {
   "source": "topospec.data.tesseract",
   "pipeline": "Tesseract2 (github.com/YaqoobAnsari/Tesseract2)",
-  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/FF part 5up/FF part 5up_post_pruning.json",
+  "source_json": "/data1/yansari/PhD/topofield/Tesseract2/Results/Json/FF part 5up/FF part 5up_pre_pruning.json",
   "units": "image pixels",
   "n_rooms": 4,
-  "n_corridor_components": 2,
+  "n_corridor_mains": 1,
+  "n_corridor_fallback_components": 0,
   "n_transitions": 0,
   "n_doors": 0,
   "n_exit_doors": 0,
   "n_subnodes_contracted": 27,
-  "n_outside_dropped": 0
+  "n_waypoints_contracted": 1206,
+  "n_outside_dropped": 26,
+  "text_labels_joined": true
  }
 }

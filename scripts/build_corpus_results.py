@@ -75,6 +75,14 @@ def overlay(g, img: np.ndarray, out_path: Path, tier: int) -> None:
                 size = float(np.clip(4 + np.sqrt(n.area) / 12, 5, 16))
             ax.plot(x, y, "o", color=KIND_COLORS.get(n.kind, "#555555"),
                     ms=size, zorder=3, markeredgecolor="white", markeredgewidth=0.6)
+            if tier >= 1 and n.label:  # labels are T1+ content; render for QA
+                ax.annotate(
+                    n.label, (x, y), xytext=(0, 7), textcoords="offset points",
+                    fontsize=6.5, color=KIND_COLORS.get(n.kind, "#333333"),
+                    ha="center", zorder=5, fontweight="bold",
+                    bbox=dict(boxstyle="round,pad=0.12", fc="white",
+                              ec="none", alpha=0.75),
+                )
     n_doors = sum(1 for n in g.nodes.values() if n.kind == "door")
     ax.set_title(
         f"{g.building_id} — T{tier}: {len(g.nodes) - n_doors} spaces"
@@ -116,7 +124,7 @@ def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     fresh = fresh_batch_images()
     rows = []
-    exports = sorted(TESS_RESULTS.glob("*/*_post_pruning.json"))
+    exports = sorted(TESS_RESULTS.glob("*/*_pre_pruning.json"))
     for export in exports:
         image_name = export.parent.name  # e.g. "FF part 1upE"
         src_png = RAW / f"{image_name}.png"

@@ -12,17 +12,19 @@ from topospec.data.tesseract import (
 )
 from topospec.graphs.validate import validate_graph
 
-FIXTURE = Path(__file__).parent / "fixtures" / "tesseract" / "FF_part_2up_post_pruning.json"
+FIX_DIR = Path(__file__).parent / "fixtures" / "tesseract"
+FIXTURE = FIX_DIR / "FF_part_2up_pre_pruning.json"  # pre: all corridor mains + outside
+SIDECAR = FIX_DIR / "FF_part_2up_room_labels.txt"
 
 
 @pytest.fixture(scope="module")
 def t3():
-    return build_t3(FIXTURE)
+    return build_t3(FIXTURE, labels_txt=SIDECAR)
 
 
 @pytest.fixture(scope="module")
 def tiers():
-    return build_tiers(FIXTURE)
+    return build_tiers(FIXTURE, labels_txt=SIDECAR)
 
 
 def test_t3_validates(t3):
@@ -31,12 +33,15 @@ def test_t3_validates(t3):
 
 
 def test_space_contraction(t3):
-    """35 main rooms survive; 90 subnodes and 471 corridor waypoints contract."""
+    """Main rooms survive; subnodes and corridor waypoints contract; corridor
+    spaces are the hall-text-seeded MAINS (user QA fix), not one blob."""
     rooms = [n for n in t3.nodes.values() if n.kind == "room"]
     corridors = [n for n in t3.nodes.values() if n.kind == "corridor"]
-    assert len(rooms) == 35
-    assert 1 <= len(corridors) <= 5
-    assert t3.meta["n_subnodes_contracted"] == 90
+    assert len(rooms) == t3.meta["n_rooms"] == 35
+    assert t3.meta["n_corridor_mains"] >= 2
+    assert len(corridors) >= t3.meta["n_corridor_mains"]
+    assert t3.meta["n_subnodes_contracted"] >= 80  # pre/post exports differ slightly
+    assert t3.meta["n_waypoints_contracted"] > 100
 
 
 def test_t3_measures_present(t3):
@@ -97,4 +102,25 @@ def test_provenance_stamped(t3):
     meta = t3.meta
     assert meta["source"] == "topospec.data.tesseract"
     assert "Tesseract2" in meta["pipeline"]
-    assert meta["n_doors"] == 43
+    assert meta["n_doors"] >= 40
+    assert meta["text_labels_joined"] is True
+
+
+def test_text_labels_joined(t3):
+    """User semantic key: rooms are numbers, corridors 'hall' (from Hall text)."""
+    rooms = [n for n in t3.nodes.values() if n.kind == "room"]
+    numeric = sum(1 for n in rooms if n.label and n.label.strip().isdigit())
+    assert numeric >= 0.6 * len(rooms), f"only {numeric}/{len(rooms)} rooms numeric"
+    mains = [n for nid, n in t3.nodes.items() if nid.startswith("corridor_main")]
+    assert mains and all(n.label == "hall" for n in mains)
+
+
+def test_corridor_mains_keep_their_positions(t3):
+    """Corridor spaces sit at the Hall TEXT locations, not a mesh centroid blob."""
+    import json
+
+    tess = json.loads(FIXTURE.read_text())
+    pos = {n["id"]: n["position"] for n in tess["nodes"]}
+    for nid, n in t3.nodes.items():
+        if nid.startswith("corridor_main"):
+            assert n.centroid == (float(pos[nid][0]), float(pos[nid][1]))

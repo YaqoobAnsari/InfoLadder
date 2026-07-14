@@ -1,2 +1,2 @@
 pre-existing pipeline artifact (older weights) — rerun pending
-source: /data1/yansari/PhD/topofield/Tesseract2/Results/Json/file_4/file_4_post_pruning.json
+source: /data1/yansari/PhD/topofield/Tesseract2/Results/Json/file_4/file_4_pre_pruning.json
