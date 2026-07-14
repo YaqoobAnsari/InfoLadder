@@ -249,3 +249,21 @@ won't exercise the door R-CNN — next step renders synthetic door ARCS (CAD
 convention) at the approximated openings; a single-plan end-to-end Tesseract test
 gates the batch scale-up. Full train.zip (4.4 GB) retained in data/raw/msd for
 corpus-scale rendering.
+
+## 2026-07-14 — D-016: Door tier on rendered corpora — RETRAIN the door R-CNN (user decision)
+
+**Context.** Gate result: Tesseract's door detector catches 2/19 synthetic arcs on
+MSD renders (style/context gap vs its training doors: bold double-swing symbols in
+thick hatched walls; figure: data/derived/msd_render/door_arc_vs_real.png). Without a
+fix, T2 on rendered corpora is an artifact (near-empty door tier) and would poison
+tier-information measurements. Options weighed: arc-style tuning (uncertain ceiling),
+gap fallback (T0/T1-only validation), retrain (durable).
+**Decision (user).** Fine-tune the door R-CNN on MSD-derived synthetic arcs —
+unlimited labeled examples generatable at render time (arc bboxes known exactly).
+Style-domain randomization (arc/wall thickness, hatching, jambs, swing styles,
+rotations) to generalize rather than overfit one synthetic style.
+**Acceptance gate:** >=80% detection on held-out synthetic renders AND no regression
+on the real prelim sheets (per-sheet door detections within ±10% of the current
+checkpoint, positions consistent). Original checkpoint preserved (door_mdl_32.orig);
+new weights deployed with provenance. Meanwhile the 200-plan batch validates T0/T1
+(rooms/labels/connectivity) — explicitly scoped, T2-from-renders excluded from claims.
