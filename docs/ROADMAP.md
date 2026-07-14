@@ -54,7 +54,14 @@ and the STATUS block as work completes. Task IDs are referenced from code
 - [x] INFRA-5 Probe families V0–V5 + featurization interface + budget assertions
 - [x] INFRA-6 Run manifest + append-only registry + config-driven runner + CLI
 - [x] INFRA-7 Synthetic planted-target generators (edge-type / direction / containment)
-- [ ] INFRA-8 GraphGPS-style V6 probe (≤2M params) — needed by B-3; CPU-viable size
+- [ ] INFRA-8 GraphGPS-style V6 probe (≤2M params) — needed by B-3. **Priority raised
+      2026-07-14:** the top of the capacity sweep is what makes "linear probes" a
+      non-issue for reviewers (plan §8: curves are read ACROSS V0–V6, never from one
+      probe); GPU MIG slices now available make it cheap to run.
+- [x] INFRA-11 Results reporting layer (2026-07-14): `topospec/reporting/` +
+      `scripts/make_reports.py` — every phase gets a tracked report.md + figures under
+      `results/reports/` (calibration surface, controls, raster-ingest QA overlays).
+      Regenerate after every completed job; nothing hand-entered.
 - [ ] INFRA-9 IndoorGML + IFC spatial-structure serializers (plan App. B; toolkit claim C1/T5).
       Acceptance: round-trip R1+→IndoorGML and R4→IFC IfcZone groups on 3 fixture graphs;
       validates against schema versions pinned in DECISIONS.md

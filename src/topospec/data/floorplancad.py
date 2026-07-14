@@ -438,7 +438,15 @@ def build_r0(
     positions in raster coordinates as `door_hints` for the future R1/R2 opening
     step (this lane emits R0 only). `building_id` is `fpcad:<stem>`; provenance and
     `px_per_unit` are stamped into the graph meta.
+
+    Morphology defaults differ from the raster lane's: this raster contains ONLY
+    boundary strokes (no furniture/text to reject), so the wall-opening step is
+    minimized (`wall_open_px=1`) to avoid eroding thin face-lines, and closing is
+    raised (`wall_close_px=3`) to fuse FloorPlanCAD's double-line walls into solid
+    barriers. Both are overridable via kwargs.
     """
+    extract_kwargs.setdefault("wall_open_px", 1)
+    extract_kwargs.setdefault("wall_close_px", 3)
     parsed = parse_svg(svg_path)
     wall_img = rasterize_walls(parsed, px_per_unit, wall_stroke_px=wall_stroke_px)
     stem = Path(svg_path).stem
