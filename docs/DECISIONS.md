@@ -82,3 +82,30 @@ needs mcore-n01's 128 CPUs, write a staging script + new DECISIONS entry.
 **Context.** GitHub repo created as YaqoobAnsari/InfoLadder ("tentative name").
 **Decision.** Repo/paper working name InfoLadder; the Python package remains
 `topospec` until the name is final (rename is cheap and mechanical; churn now is not).
+
+## 2026-07-14 — D-008: User-supplied rasters adopted as the preliminary test set + Gate-b candidate
+
+**Context.** User provided 35 PNGs (moved `Input_Images/` → `data/raw/prelim_rasters/`):
+one real institutional building across FF/LF/SF sheets (with `up`/`upE` text-variant
+duplicates, cleanup pending) + 10 small residential plans + misc test images.
+**Decision.** Use as (a) the end-to-end pipeline test bed before public corpora land,
+(b) Gate-b candidate building (timed R0→R4 annotation). Ingest goes through the new
+DATA-0 drawing→SpectrumGraph lane (semi-automatic extraction + manual correction).
+Dedupe rule: one variant per sheet; never let variants enter splits as distinct
+buildings. Provenance/licensing unknown → internal use only, never redistributed.
+**Consequences.** New ROADMAP tasks DATA-0/DATA-7; InstBuild blocker downgraded.
+
+## 2026-07-14 — D-009: ArchCAD-400K and FloorPlanCAD identified as institutional-scale corpus candidates
+
+**Context.** The plan's corpora (Structured3D/CubiCasa/MSD) are residential-heavy; the
+S4 scale hypothesis needs institutional volume. Scouting found: ArchCAD-400K (2025;
+5,538 complete drawings, 86% non-residential; primitive-level panoptic annotations;
+GitHub subset, license TBD) and FloorPlanCAD (ICCV'21; 15K+ plans incl. schools/
+hospitals/malls; SVG vectors; CC BY-NC 4.0; HuggingFace download).
+**Decision (provisional).** Evaluate both at DATA-7 before committing: neither ships
+room polygons, so value hinges on a robust rooms-from-primitives derivation (shared
+with DATA-0). FloorPlanCAD first (accessible now, license clear), ArchCAD-400K second
+(bigger, newer, access to verify).
+**Consequences.** If derivation works, the institutional regime gets silver-corpus
+volume and InstBuild gold effort concentrates on R3/R4 annotation only — a material
+de-risk for the paper's headline S4 analysis.

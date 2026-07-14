@@ -8,16 +8,21 @@ and the STATUS block as work completes. Task IDs are referenced from code
 ## STATUS (update on every merge)
 
 - **Current week:** W1 (2026-07-14 – 2026-07-18)
-- **Active phase(s):** INFRA (complete) → GATE + A0 + Phase A corpus derivation
-- **Gates passed:** none yet (A0 smoke calibration PASS on 2026-07-14; full A0 pending
-  as a slurm run)
-- **Blockers:** institutional building sources for Gate-b / InstBuild (open question
-  §14.1); annotator availability (§14.3). ~~GPU access~~ resolved: slurm on deepnet
-  (docs/CLUSTER.md); grid runner needs `--shard N/M` before B-3.
+- **Active phase(s):** INFRA (complete) → GATE + A0 (submitted) + Phase A corpus work
+- **Submitted/running:** slurm job **7206** (full A0 calibration, `gpu2`, submitted
+  2026-07-14) — check `squeue -u yansari` / `runs/slurm-7206.out`; verdict lands in
+  `results/registry.jsonl` + `runs/<run_id>/summary.json`.
+- **Gates passed:** none yet (A0 SMOKE calibration PASS 2026-07-14; full A0 = job 7206)
+- **Data landed:** `data/raw/prelim_rasters/` (user-supplied, 2026-07-14): one real
+  institutional building (FF/LF/SF multi-sheet) + 10 residential plans — preliminary
+  pipeline testing + Gate-b candidate. See its README for duplicate-variant cautions.
+- **Blockers:** annotator availability (§14.3). InstBuild sourcing 🟡 partially
+  mitigated (prelim building + ArchCAD-400K/FloorPlanCAD scouting, DATA-7). Grid
+  runner needs `--shard N/M` before B-3.
 - **Compute rule:** all experiments via `sbatch --mcs-label=morshed` on partition gpu2 —
   NEVER on the login node (docs/CLUSTER.md).
-- **Last updated:** 2026-07-14 (repo scaffolded, env installed, core package + tests
-  live, slurm probed, GitHub remote InfoLadder)
+- **Last updated:** 2026-07-14 (scaffold + tests live; slurm probed; A0 job submitted;
+  prelim rasters ingested; institutional dataset candidates scouted)
 
 ## Calendar (plan §13, anchored to 2026-07-14)
 
@@ -59,7 +64,8 @@ and the STATUS block as work completes. Task IDs are referenced from code
       `results/gate/`. Requires: E+ install (A-5), IFC buildings (DATA-5).
 - [ ] G-b Annotate ONE institutional building R0→R4, timed.
       **Acceptance: ≤ 4 h** total annotation time, logged per level increment (this is
-      also the first c(k→k+1) measurement, claim C3). Requires DATA-5 source plans.
+      also the first c(k→k+1) measurement, claim C3). **Candidate building available:
+      the FF/LF/SF multi-sheet building in `data/raw/prelim_rasters/` (DATA-0).**
 - [ ] G-c Probe pipeline smoke test on 50 Structured3D scenes end-to-end
       (derive R0–R2 → auto labels → probe → I_V numbers in registry).
       **Acceptance: pipeline completes; control task at chance ± 2·SE.**
@@ -89,6 +95,19 @@ and the STATUS block as work completes. Task IDs are referenced from code
 ## Phase A (W1–3) — corpus + labels
 
 Data acquisition (details in docs/DATA.md):
+- [ ] DATA-0 **Drawing→SpectrumGraph ingest lane** (NEW 2026-07-14): extract room
+      polygons + doors from (a) the user-supplied rasters in `data/raw/prelim_rasters/`
+      and (b) CAD vector primitives (serves DATA-7 too). Approach: semi-automatic —
+      wall/door extraction (Raster-to-Graph lineage, plan §3.3) with a manual
+      annotation/correction path so the prelim building is usable regardless of
+      extractor quality. Acceptance: FF building (all sheets, deduped `up`/`upE`
+      variants) → validated R2 graph + Y_pde labels end-to-end; one residential
+      `file_N` plan likewise.
+- [ ] DATA-7 **Evaluate ArchCAD-400K + FloorPlanCAD as institutional corpus** (NEW):
+      verify access/license (ArchCAD GitHub subset; FloorPlanCAD HF, CC BY-NC),
+      download samples, test rooms-from-primitives derivation on 10 large public
+      buildings. Decision + DECISIONS entry: adopt as institutional silver corpus
+      (unblocks S4 at volume) or stay with hand-curated InstBuild only.
 - [ ] DATA-1 Structured3D: download, parse annotations → R0–R2 (~3.5K scenes / ~20K rooms)
 - [ ] DATA-2 CubiCasa5K: download, parse SVG annotations → R0–R2 (~25K rooms)
 - [ ] DATA-3 MSD (ECCV 2024): download → R0–R2 (~85K rooms) **and near-R4 via shipped

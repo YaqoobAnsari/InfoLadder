@@ -7,11 +7,24 @@ moment a dataset lands (URL used, version/commit, date, checksum, license note).
 
 | Dataset | Scale | Levels derivable | Role | Status |
 |---|---|---|---|---|
+| **prelim_rasters** (user-supplied) | 1 institutional building (FF/LF/SF, multi-sheet) + 10 small residential plans | R0–R2 via DATA-0 ingest lane; R3/R4 by hand | **preliminary pipeline testing**; Gate-b candidate building | ✅ landed 2026-07-14 → `data/raw/prelim_rasters/` (see its README) |
 | Structured3D | ~3.5K scenes / ~20K rooms | R0–R2 auto | silver corpus; Gate-c smoke set | ⬜ not downloaded |
 | CubiCasa5K | ~5K plans / ~25K rooms | R0–R2 auto | silver corpus (residential regime) | ⬜ not downloaded |
 | MSD (Modified Swiss Dwellings, ECCV 2024) | 5,372 multi-unit plans / ~85K rooms | R0–R2 auto + **near-R4 from shipped per-room zone labels** | silver corpus + zero-cost rich level | ⬜ not downloaded |
-| InstBuild | 5–10 institutional buildings | R0–R4 (gold, hand-annotated) | out-of-regime stress set; S4 scale split; annotation-cost measurement | ⬜ **blocked on source selection (plan §14.1)** |
+| InstBuild | 5–10 institutional buildings | R0–R4 (gold, hand-annotated) | out-of-regime stress set; S4 scale split; annotation-cost measurement | 🟡 partially unblocked: prelim_rasters FF building = candidate #1; ArchCAD-400K / FloorPlanCAD scouting below (DATA-7) |
 | Code corpus (Phase A2) | 1 established dataset | AST → +dataflow → +call (auto) | generality check C5 | ⬜ pending A2-1 decision |
+
+## Institutional-scale candidate sources (scouted 2026-07-14; evaluation = DATA-7)
+
+| Source | Scale & mix | Format / annotations | Access | Fit |
+|---|---|---|---|---|
+| **ArchCAD-400K** (arXiv 2503.22346, 2025) | 5,538 complete drawings from 11,917 industry drawings; **only 14% residential** — offices, industrial parks, large public buildings | vector CAD primitives with panoptic symbol annotations (56 classes: walls, doors, windows, stairs...); NO room/space polygons shipped | GitHub `ArchiAI-LAB/ArchCAD` (public subset released; license unstated — verify) | Best volume source for the institutional regime (S4). Requires a primitives→room-topology derivation step (shared with DATA-0 lane) |
+| **FloorPlanCAD** (ICCV 2021) | 15,000+ plans incl. schools, hospitals, malls, residential towers (100+ projects) | SVG vector, line-grained semantic+instance labels, 30+ classes | floorplancad.github.io + HuggingFace `Voxel51/FloorPlanCAD`; CC BY-NC 4.0 | Established, downloadable now; same rooms-from-primitives derivation need |
+
+Both ship wall/door **primitives**, not room graphs → one shared `drawing→SpectrumGraph`
+module (DATA-0) serves prelim rasters AND these CAD corpora. If room derivation proves
+robust on FloorPlanCAD's hospitals/schools, InstBuild stops being annotation-bound for
+R0–R2 and gold effort concentrates on R3/R4 only.
 
 ## Acquisition notes
 
