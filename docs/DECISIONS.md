@@ -267,3 +267,28 @@ on the real prelim sheets (per-sheet door detections within ±10% of the current
 checkpoint, positions consistent). Original checkpoint preserved (door_mdl_32.orig);
 new weights deployed with provenance. Meanwhile the 200-plan batch validates T0/T1
 (rooms/labels/connectivity) — explicitly scoped, T2-from-renders excluded from claims.
+
+## 2026-07-15 — D-017: ArchCAD-400K landed; adopted as the institutional-scale tier corpus with ground-truth doors
+
+**Context.** User's gated-access request approved; all modalities downloaded to
+data/raw/archcad/ (svg 311MB, json 393MB, png 1.83GB, caption 19MB; 41,097 slices).
+License pinned: **CC BY-NC 4.0** (HF card) + gated non-commercial form; GitHub
+LICENSE says academic-use-only — treat as non-commercial research only, cite
+arXiv:2503.22346, never redistribute.
+**Format truths (dissected, not from docs):** JSON = {"entities": [LINE/ARC/CIRCLE
+records with explicit coords]}; semantics are NUMERIC ids (README shows strings —
+handle both, echoing FloorPlanCAD's dual-spelling quirk). Doors are classes 1-4
+WITH instance labels — GROUND-TRUTH TYPED DOORS, no R-CNN needed on this corpus.
+Walls=20, glass=19, staircase=6, elevator=5. NO room polygons, NO text. Filenames
+are UUIDs — slices (14m x 14m crops) canNOT be stitched into whole drawings.
+**Decision.** Build an ArchCAD lane: rasterize wall/glass primitives -> watershed
+room derivation (raster.py, D-010 template) with openings punched at annotated
+door instances -> typed door nodes from ground truth -> T0/T2/T3 tiers (T1 kinds
+present but semantic labels absent — no text; rooms unlabeled, stairs/elevators
+become transitions from classes 5/6). Slice-crop caveat inherited from D-010:
+an ENCLOSURE SURVEY across all slices gates corpus admission (keep slices with
+enough fully-enclosed rooms); the usable fraction is reported, not assumed.
+MSD remains the accuracy-validation corpus (it has room ground truth; ArchCAD
+does not — its door/count QA pairs give weak checks only).
+**Consequences.** Institutional regime (S4) gets volume with trustworthy T2; the
+door-tier story on ArchCAD is independent of the D-016 retrain.
