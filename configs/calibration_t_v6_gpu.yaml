@@ -1,0 +1,26 @@
+# V6 (GraphGPS) row of the T-ladder calibration — GPU resubmission.
+# Supersedes calibration_t_v6.yaml (CPU): 28/144 cells in 16 h projected past the
+# 47 h walltime; a MIG slice runs the same protocol in hours. Same grid, same
+# seeds/restarts; only device differs. Immutable once used.
+experiment: calibration_a0
+seed: 20260714
+device: cuda
+
+n_buildings: 60
+levels: [0, 1, 2, 3, 4, 5]
+targets:
+  - planted_degree
+  - planted_label
+  - planted_door
+  - planted_attr
+  - planted_delta
+  - planted_zone
+  - planted_door_ctrl
+  - planted_zone_ctrl
+families: [V6]
+seeds: [0, 1, 2]
+n_restarts: 3
+mdl: false
+
+margin_nats: 0.1
+ctrl_tol_nats: 0.05

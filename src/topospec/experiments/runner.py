@@ -146,7 +146,7 @@ def run_calibration(
                     if family is None:
                         continue
                 else:
-                    family = make_family(fam_name)
+                    family = make_family(fam_name, device=str(cfg.get("device", "cpu")))
                 for s in seeds:
                     cell_no += 1
                     # crc32, not hash(): str hash is process-randomized (CLAUDE.md: seeded RNG only)

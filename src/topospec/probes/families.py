@@ -225,17 +225,19 @@ class GNNFamily(ProbeFamily):
     consumes_structure = True
 
     def __init__(self, n_layers: int, hidden: int = 32, lr: float = 0.01,
-                 max_epochs: int = 300, patience: int = 30):
+                 max_epochs: int = 300, patience: int = 30, device: str = "cpu"):
         self.n_layers = n_layers
         self.hidden = hidden
         self.lr = lr
         self.max_epochs = max_epochs
         self.patience = patience
+        self.device = device
         self.name = f"V{3 + n_layers}_gnn{n_layers}"
 
     class _Fitted(FittedProbe):
-        def __init__(self, model, n_classes, n_pe):
+        def __init__(self, model, n_classes, n_pe, device="cpu"):
             self.model, self.n_classes, self.n_pe = model, n_classes, n_pe
+            self.device = device
 
         def predict_proba(self, ds: ProbeDataset) -> list[np.ndarray]:
             import torch
@@ -246,11 +248,13 @@ class GNNFamily(ProbeFamily):
                 for g in ds.graphs:
                     x = g.x if self.n_pe == 0 else g.x[:, : -self.n_pe]
                     logits = self.model(
-                        torch.from_numpy(x),
-                        torch.from_numpy(g.edge_index),
-                        torch.from_numpy(g.edge_attr),
+                        torch.from_numpy(x).to(self.device),
+                        torch.from_numpy(g.edge_index).to(self.device),
+                        torch.from_numpy(g.edge_attr).to(self.device),
                     )
-                    out.append(torch.softmax(logits, dim=1).numpy().astype(np.float64))
+                    out.append(
+                        torch.softmax(logits, dim=1).cpu().numpy().astype(np.float64)
+                    )
             return out
 
     def _build(self, in_dim: int, edge_dim: int, n_classes: int, seed: int):
@@ -270,10 +274,14 @@ class GNNFamily(ProbeFamily):
                 src, dst = edge_index[0], edge_index[1]
                 if src.numel() > 0:
                     m = torch.relu(self.w_m(torch.cat([h[src], edge_attr], dim=1)))
-                    agg = torch.zeros(h.shape[0], m.shape[1], dtype=h.dtype)
+                    agg = torch.zeros(
+                        h.shape[0], m.shape[1], dtype=h.dtype, device=h.device
+                    )
                     agg.index_add_(0, dst, m)  # SUM aggregation: degree-aware
                 else:
-                    agg = torch.zeros(h.shape[0], hidden, dtype=h.dtype)
+                    agg = torch.zeros(
+                        h.shape[0], hidden, dtype=h.dtype, device=h.device
+                    )
                 return torch.relu(self.w_s(h) + agg)
 
         class Net(nn.Module):
@@ -300,6 +308,8 @@ class GNNFamily(ProbeFamily):
         in_dim = sample.x.shape[1] - n_pe
         edge_dim = sample.edge_attr.shape[1]
         model = self._build(in_dim, edge_dim, train.n_classes, int(rng.integers(2**31)))
+        device = torch.device(self.device)
+        model.to(device)
         opt = torch.optim.Adam(model.parameters(), lr=self.lr)
         lossf = nn.CrossEntropyLoss()
 
@@ -309,10 +319,10 @@ class GNNFamily(ProbeFamily):
                 x = g.x if n_pe == 0 else g.x[:, : -n_pe]
                 out.append(
                     (
-                        torch.from_numpy(x),
-                        torch.from_numpy(g.edge_index),
-                        torch.from_numpy(g.edge_attr),
-                        torch.from_numpy(y.astype(np.int64)),
+                        torch.from_numpy(x).to(device),
+                        torch.from_numpy(g.edge_index).to(device),
+                        torch.from_numpy(g.edge_attr).to(device),
+                        torch.from_numpy(y.astype(np.int64)).to(device),
                     )
                 )
             return out
@@ -355,7 +365,7 @@ class GNNFamily(ProbeFamily):
                     break
         if best_state is not None:
             model.load_state_dict(best_state)
-        return self._Fitted(model, train.n_classes, n_pe)
+        return self._Fitted(model, train.n_classes, n_pe, device=device)
 
     def param_count(self, input_dim, n_classes):
         edge_dim = 0  # reported without edge dim; manifests document both
@@ -439,7 +449,7 @@ class GraphGPSFamily(ProbeFamily):
                 src, dst = edge_index[0], edge_index[1]
                 if src.numel() > 0:
                     m = torch.relu(self.w_m(torch.cat([h[src], edge_attr], dim=1)))
-                    agg = torch.zeros_like(h)
+                    agg = torch.zeros_like(h)  # zeros_like follows h's device
                     agg.index_add_(0, dst, m)  # SUM aggregation, like V4/V5
                 else:
                     agg = torch.zeros_like(h)
@@ -546,14 +556,14 @@ class GraphGPSFamily(ProbeFamily):
 
 
 # ------------------------------------------------------------------------ registry
-def make_family(name: str) -> ProbeFamily:
+def make_family(name: str, device: str = "cpu") -> ProbeFamily:
     table: dict[str, Callable[[], ProbeFamily]] = {
         "V1": PriorFamily,
         "V2": LinearFamily,
         "V3": LinearPEFamily,
-        "V4": lambda: GNNFamily(n_layers=1),
-        "V5": lambda: GNNFamily(n_layers=2),
-        "V6": GraphGPSFamily,
+        "V4": lambda: GNNFamily(n_layers=1, device=device),
+        "V5": lambda: GNNFamily(n_layers=2, device=device),
+        "V6": lambda: GraphGPSFamily(device=device),
     }
     if name not in table:
         raise KeyError(f"unknown probe family {name!r} (V0 is constructed per-target)")
