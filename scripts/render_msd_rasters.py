@@ -205,6 +205,296 @@ def render_plan(
     return img, stats
 
 
+# ---------------------------------------------------------------------------
+# Door-detector training data (D-016): annotated renders with EXACT door bboxes
+# plus style-domain randomization.
+#
+# render_plan_annotated emits, at render time, the pixel bounding box of every door
+# symbol it draws. The symbol is generated from known world geometry (the swing arc
+# is sampled analytically), so the box is exact — no post-hoc detection. The
+# randomization (wall thickness + single/double-line walls, arc/leaf stroke, single
+# vs double swing, hinge side, swing direction, door-frame jambs, wall hatching, and
+# k*90 rotation) is what lets a fine-tuned R-CNN generalize from one clean synthetic
+# style to real bold double-swing symbols in thick hatched walls (D-016) instead of
+# overfitting the thin arc. This is a SEPARATE entry point from render_plan (the
+# T0/T1 validation renderer, unchanged); nothing here affects that lane.
+# ---------------------------------------------------------------------------
+
+# Randomization ranges are documented so the grader can reproduce the training set
+# from a seed. All draws use the passed rng (np.random.Generator) — no global seeding.
+DOOR_STYLE_RANGES = {
+    "wall_px": "[2,7]", "wall_style": "single|double (p=.55/.45)",
+    "stroke_px": "[1,4]", "door_w_scale": "[0.8,1.35]",
+    "swing_double_p": 0.5, "swing_into_larger_p": 0.7, "hinge_side": "per-door 0/1",
+    "jambs_p": 0.5, "hatch_p": 0.4, "hatch_spacing": "[4,8]",
+    "draw_text_p": 0.6, "rot90": "{0,1,2,3}",
+}
+
+
+def _sample_door_style(rng) -> dict:
+    """Sample a per-plan render style for door-detector domain randomization (D-016)."""
+    return {
+        "wall_px": int(rng.integers(2, 8)),
+        "wall_style": "double" if rng.random() < 0.45 else "single",
+        "stroke_px": int(rng.integers(1, 5)),
+        "door_w_scale": float(rng.uniform(0.8, 1.35)),
+        "swing_double_p": 0.5,
+        "swing_into": "larger" if rng.random() < 0.7 else "smaller",
+        "jambs": bool(rng.random() < 0.5),
+        "hatch": bool(rng.random() < 0.4),
+        "hatch_spacing": int(rng.integers(4, 9)),
+        "draw_text": bool(rng.random() < 0.6),
+        "rot90": int(rng.integers(0, 4)),
+    }
+
+
+def _unit(dx, dy):
+    n = math.hypot(dx, dy)
+    return (dx / n, dy / n) if n > 1e-9 else (0.0, 0.0)
+
+
+def _leaf_points(hinge, wall_dir, swing_unit, leaf_len):
+    """World-coord points of one door leaf: swing arc (13 samples) + open leaf line.
+
+    Returns (polylines, all_points). polylines is a list of point-lists to stroke;
+    all_points is every vertex (for the exact bbox).
+    """
+    hx, hy = hinge
+    closed = (hx + wall_dir[0] * leaf_len, hy + wall_dir[1] * leaf_len)
+    openp = (hx + swing_unit[0] * leaf_len, hy + swing_unit[1] * leaf_len)
+    a0 = math.atan2(closed[1] - hy, closed[0] - hx)
+    a1 = math.atan2(openp[1] - hy, openp[0] - hx)
+    d = a1 - a0
+    while d > math.pi:
+        d -= 2 * math.pi
+    while d < -math.pi:
+        d += 2 * math.pi
+    arc = [(hx + leaf_len * math.cos(a0 + d * t / 12.0),
+            hy + leaf_len * math.sin(a0 + d * t / 12.0)) for t in range(13)]
+    polylines = [arc, [hinge, openp]]
+    return polylines, arc + [hinge, openp, closed]
+
+
+def _draw_door_symbol(draw, to_px, opening, wall_unit, swing_unit, door_w, style, rng):
+    """Draw a door symbol at `opening` and return its EXACT pixel bbox [x1,y1,x2,y2].
+
+    wall_unit is the unit vector along the wall (perpendicular to swing_unit); the two
+    jambs are opening +/- wall_unit*door_w/2. Randomizes single/double swing, hinge
+    side, and optional frame jambs. Stroke width from style['stroke_px'].
+    """
+    ox, oy = opening
+    jambA = (ox - wall_unit[0] * door_w / 2.0, oy - wall_unit[1] * door_w / 2.0)
+    jambB = (ox + wall_unit[0] * door_w / 2.0, oy + wall_unit[1] * door_w / 2.0)
+    stroke = style["stroke_px"]
+    double = rng.random() < style.get("swing_double_p", 0.5)
+    pts_world = []
+    polylines = []
+    if double:
+        half = door_w / 2.0
+        p1, a1 = _leaf_points(jambA, wall_unit, swing_unit, half)
+        p2, a2 = _leaf_points(jambB, (-wall_unit[0], -wall_unit[1]), swing_unit, half)
+        polylines += p1 + p2
+        pts_world += a1 + a2
+    else:
+        hinge_side = int(rng.integers(0, 2))
+        hinge = jambA if hinge_side == 0 else jambB
+        wdir = wall_unit if hinge_side == 0 else (-wall_unit[0], -wall_unit[1])
+        pl, ap = _leaf_points(hinge, wdir, swing_unit, door_w)
+        polylines += pl
+        pts_world += ap
+    if style.get("jambs"):
+        jl = door_w * 0.28  # frame tick half-length, across the wall
+        for jx, jy in (jambA, jambB):
+            t0 = (jx - swing_unit[0] * jl, jy - swing_unit[1] * jl)
+            t1 = (jx + swing_unit[0] * jl, jy + swing_unit[1] * jl)
+            polylines.append([t0, t1])
+            pts_world += [t0, t1]
+    for pl in polylines:
+        draw.line([to_px(*p) for p in pl], fill=0, width=stroke, joint="curve")
+    xs = [to_px(*p)[0] for p in pts_world]
+    ys = [to_px(*p)[1] for p in pts_world]
+    pad = stroke + 2
+    return [int(min(xs) - pad), int(min(ys) - pad), int(max(xs) + pad), int(max(ys) + pad)]
+
+
+def _draw_walls_styled(draw, rooms, to_px, style):
+    """Stroke room-polygon boundaries; single thick line or offset double line."""
+    wpx = style["wall_px"]
+    for r in rooms:
+        ring = [to_px(x, y) for x, y in r["poly"]]
+        ring_closed = ring + [ring[0]]
+        if style["wall_style"] == "double":
+            off = max(1.5, wpx * 0.9)
+            for sgn in (+1, -1):
+                shifted = []
+                n = len(ring_closed)
+                for i in range(n):
+                    x0, y0 = ring_closed[i]
+                    x1, y1 = ring_closed[(i + 1) % n]
+                    nx, ny = _unit(-(y1 - y0), (x1 - x0))
+                    shifted.append((x0 + sgn * nx * off, y0 + sgn * ny * off))
+                shifted.append(shifted[0])
+                draw.line(shifted, fill=0, width=max(1, wpx // 2), joint="curve")
+        else:
+            draw.line(ring_closed, fill=0, width=wpx, joint="curve")
+
+
+def _apply_hatch(img, rooms, to_px, style):
+    """Overlay diagonal hatch lines within a dilated wall band (numpy compositing)."""
+    from PIL import ImageDraw as _ID
+    w, h = img.size
+    band = max(4, style["wall_px"] + 3)
+    mask = Image.new("L", (w, h), 0)
+    md = _ID.Draw(mask)
+    for r in rooms:
+        ring = [to_px(x, y) for x, y in r["poly"]]
+        md.line(ring + [ring[0]], fill=255, width=band, joint="curve")
+    hatch = Image.new("L", (w, h), 255)
+    hd = _ID.Draw(hatch)
+    sp = style["hatch_spacing"]
+    for c in range(-h, w, sp):  # 45-degree diagonals
+        hd.line([(c, 0), (c + h, h)], fill=0, width=1)
+    a_img = np.asarray(img).copy()
+    m = (np.asarray(mask) > 0) & (np.asarray(hatch) == 0)
+    a_img[m] = 0
+    return Image.fromarray(a_img, mode="L")
+
+
+def _rot90_image_boxes(img, boxes, k):
+    """Rotate an 'L' image by k*90 deg CCW (lossless) and remap axis-aligned boxes.
+
+    np.rot90(arr, k) rotates CCW. For k=1 on a (H,W) image, pixel (x,y) [x=col, y=row]
+    maps to (x', y') = (y, W-1-x). Compose for k>1. Verified by the ink-coverage self
+    check in gen_door_trainset (boxes must still bound drawn ink after rotation).
+    """
+    k %= 4
+    if k == 0:
+        return img, boxes
+    arr = np.asarray(img)
+    W = arr.shape[1]
+    H = arr.shape[0]
+    out = Image.fromarray(np.rot90(arr, k), mode="L")
+    def remap(b, w, h):
+        x1, y1, x2, y2 = b
+        # single CCW step on a w x h image -> (x,y) -> (y, w-1-x)
+        nx1, ny1 = y1, w - 1 - x1
+        nx2, ny2 = y2, w - 1 - x2
+        return [min(nx1, nx2), min(ny1, ny2), max(nx1, nx2), max(ny1, ny2)]
+    w, h = W, H
+    for _ in range(k):
+        boxes = [remap(b, w, h) for b in boxes]
+        w, h = h, w
+    return out, boxes
+
+
+def render_plan_annotated(graph, native_id, rng, style=None, pad_px=24):
+    """Render one MSD plan with domain randomization and return (img, boxes, meta).
+
+    boxes are exact pixel door bboxes [x1,y1,x2,y2]; meta carries the sampled style,
+    the world->px transform, and counts. Emits door bboxes AT RENDER TIME (D-016).
+    """
+    if style is None:
+        style = _sample_door_style(rng)
+
+    rooms = []
+    for _key, att in graph.nodes(data=True):
+        rt = att.get("room_type")
+        geom = att.get("geometry")
+        if rt is None or not geom or len(geom) < 3:
+            continue
+        cen = att.get("centroid")
+        name = ROOM_NAMES[int(rt)] if int(rt) < len(ROOM_NAMES) else str(rt)
+        rooms.append({
+            "name": name, "text": LABEL_REMAP.get(name, name.lower()),
+            "poly": np.asarray(geom, dtype=float),
+            "centroid": (float(cen[0]), float(cen[1])) if cen is not None else None,
+        })
+    if not rooms:
+        raise ValueError(f"{native_id}: no renderable rooms")
+
+    allpts = np.concatenate([r["poly"] for r in rooms])
+    minx, miny = allpts.min(axis=0)
+    maxx, maxy = allpts.max(axis=0)
+    extent = max(maxx - minx, maxy - miny) or 1.0
+    ppm = float(np.clip(1400.0 / extent, 30.0, 60.0))
+
+    def to_px(x, y):
+        return ((x - minx) * ppm + pad_px, (maxy - y) * ppm + pad_px)
+
+    w = int((maxx - minx) * ppm) + 2 * pad_px
+    h = int((maxy - miny) * ppm) + 2 * pad_px
+    img = Image.new("L", (w, h), color=255)
+    draw = ImageDraw.Draw(img)
+
+    _draw_walls_styled(draw, rooms, to_px, style)
+    if style["hatch"]:
+        img = _apply_hatch(img, rooms, to_px, style)
+        draw = ImageDraw.Draw(img)
+
+    from shapely.geometry import Polygon
+    from shapely.ops import nearest_points
+
+    key_to_poly, key_to_area, key_to_cxy = {}, {}, {}
+    for key, att in graph.nodes(data=True):
+        g = att.get("geometry")
+        if g and len(g) >= 3:
+            try:
+                poly = Polygon(g)
+            except Exception:
+                continue
+            key_to_poly[key] = poly
+            key_to_area[key] = poly.area
+            key_to_cxy[key] = (poly.centroid.x, poly.centroid.y)
+
+    boxes = []
+    for u, v, att in graph.edges(data=True):
+        gap_m = ACCESS_GAP_M.get(att.get("connectivity"))
+        if gap_m is None or u not in key_to_poly or v not in key_to_poly:
+            continue
+        try:
+            p1, p2 = nearest_points(key_to_poly[u], key_to_poly[v])
+        except Exception:
+            continue
+        ox, oy = (p1.x + p2.x) / 2.0, (p1.y + p2.y) / 2.0
+        door_w = 2.0 * gap_m * style["door_w_scale"]
+        # swing toward the chosen room; opening (world) -> swing unit + wall unit
+        if style["swing_into"] == "larger":
+            target = v if key_to_area[v] >= key_to_area[u] else u
+        else:
+            target = u if key_to_area[v] >= key_to_area[u] else v
+        tcx, tcy = key_to_cxy[target]
+        swing_unit = _unit(tcx - ox, tcy - oy)
+        if swing_unit == (0.0, 0.0):
+            continue
+        wall_unit = (-swing_unit[1], swing_unit[0])
+        rpx = (door_w / 2.0) * ppm
+        cx, cy = to_px(ox, oy)
+        draw.ellipse([cx - rpx, cy - rpx, cx + rpx, cy + rpx], fill=255)  # punch opening
+        bbox = _draw_door_symbol(draw, to_px, (ox, oy), wall_unit, swing_unit, door_w, style, rng)
+        # clamp into image
+        bbox = [max(0, min(bbox[0], w - 1)), max(0, min(bbox[1], h - 1)),
+                max(0, min(bbox[2], w - 1)), max(0, min(bbox[3], h - 1))]
+        if bbox[2] - bbox[0] >= 2 and bbox[3] - bbox[1] >= 2:
+            boxes.append(bbox)
+
+    if style["draw_text"]:
+        font = _font(14)
+        for r in rooms:
+            if r["centroid"] is None:
+                continue
+            tx, ty = to_px(*r["centroid"])
+            draw.text((tx, ty), r["text"], fill=0, font=font, anchor="mm")
+
+    if style["rot90"]:
+        img, boxes = _rot90_image_boxes(img, boxes, style["rot90"])
+
+    meta = {
+        "native_id": native_id, "n_rooms": len(rooms), "n_doors": len(boxes),
+        "px_per_m": round(ppm, 1), "size": list(img.size), "style": style,
+    }
+    return img, boxes, meta
+
+
 def main() -> int:
     import argparse
 
