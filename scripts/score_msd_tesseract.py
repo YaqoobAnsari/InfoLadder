@@ -184,6 +184,44 @@ def score_plan(native_id, tr, ppm):
     }
 
 
+def _reconcile_missing(missing) -> dict:
+    """Explain plans that have no post_pruning graph by their leftover Tesseract JSON
+    fingerprint, so 'n_missing_output' is accounted for rather than opaque (D-014).
+
+    Main.py writes JSON in this order: ini_graph -> final_graph -> classify_doors
+    (the 5-colour-palette gate at utils/Improve.py) -> pre_pruning -> post_pruning.
+    So a plan that died in the door stage has ini+final but neither pruning file.
+    Buckets (a plan is "missing" here iff it lacks post_pruning):
+      doorstage_no_pruning : ini+final present, no pre/post. Dominant cause is the
+        classify_doors 5-colour crash on plans lacking a region class (no corridor/
+        balcony) — patched 2026-07-15 (InfoLadder); a rare door-detection OOM leaves
+        the same fingerprint (disambiguate via the slurm oom_kill count).
+      pre_no_post   : pre_pruning present, post absent (pruning-stage crash).
+      early_crash   : ini present, final absent (crash before the door stage).
+      no_output     : no result dir at all (render/copy/other failure).
+    """
+    from collections import Counter
+    buckets: Counter = Counter()
+    ids = defaultdict(list)
+    for nid in missing:
+        d = TESS / "Results/Json" / f"msd_{nid}"
+        def _has(stage, _nid=nid, _d=d):
+            return (_d / f"msd_{_nid}_{stage}.json").exists()
+        if not d.exists():
+            key = "no_output"
+        elif _has("pre_pruning"):
+            key = "pre_no_post"
+        elif _has("ini_graph") and _has("final_graph"):
+            key = "doorstage_no_pruning"
+        elif _has("ini_graph"):
+            key = "early_crash"
+        else:
+            key = "no_output"
+        buckets[key] += 1
+        ids[key].append(nid)
+    return {"counts": dict(buckets), "examples": {k: sorted(v)[:8] for k, v in ids.items()}}
+
+
 def main() -> int:
     render_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("data/derived/msd_render_arc")
     reports = {r["native_id"]: r for r in json.load(open(render_dir / "render_report.json"))}
@@ -214,6 +252,7 @@ def main() -> int:
         "door_detection_rate": round(tot_doors / tot_arcs, 4) if tot_arcs else 0.0,
         "door_note": "T2 door tier NOT valid at this detection rate (see D-014 gate).",
         "total_arcs_rendered": tot_arcs, "total_doors_detected": tot_doors,
+        "missing_reconciliation": _reconcile_missing(missing),
     }
     out = {"aggregate": agg, "provenance": _provenance(), "per_plan": rows, "missing": missing}
     (render_dir / "batch_report.json").write_text(json.dumps(out, indent=2))
@@ -259,6 +298,18 @@ def _write_md(render_dir, agg, rows, missing):
         f"- room-type accuracy (CRAFT label vs drawn): **{agg['room_type_accuracy']}**",
         f"- adjacency agreement F1: **{agg['adjacency_f1']}**",
         f"- door-detection rate: {agg['door_detection_rate']:.1%} (T2 NOT valid)",
+        "",
+        "## Missing-output reconciliation",
+        f"{agg['n_missing_output']} of {agg['n_scored'] + agg['n_missing_output']} "
+        "plans have no post_pruning graph. By leftover-JSON fingerprint "
+        "(ini_graph -> final_graph -> classify_doors 5-colour gate -> pre_pruning -> "
+        "post_pruning):",
+        *[f"- `{k}`: {v}" for k, v in
+          sorted(agg["missing_reconciliation"]["counts"].items(), key=lambda kv: -kv[1])],
+        "`doorstage_no_pruning` = crashed at the door stage; dominant cause is the "
+        "classify_doors 5-colour crash on plans lacking a region class (patched "
+        "2026-07-15), plus any rare door-detection OOM (same fingerprint — use the "
+        "slurm oom_kill count to separate).",
         "",
         "Matching: MSD GT centroids mapped to the render pixel frame (render_report "
         "transform), greedy nearest within ~2 m to Tesseract post_pruning nodes; doors "

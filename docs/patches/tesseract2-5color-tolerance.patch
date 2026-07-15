@@ -1,0 +1,38 @@
+diff --git a/utils/Improve.py b/utils/Improve.py
+index d9845ff..ef7c824 100644
+--- a/utils/Improve.py
++++ b/utils/Improve.py
+@@ -92,10 +92,30 @@ def classify_doors(image_path, door_bboxes, output_dir, print_tag=False):
+     # Convert the image to RGB format
+     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+ 
+-    # Check for unique colors in the image
++    # Check for unique colors in the image.
++    # NOTE (InfoLadder patch, 2026-07-15): the segmented map this receives is
++    # reconstructed by pixelwise_areas from a fixed 5-colour palette (room/outdoor/
++    # corridor/unmarked/wall) on a black background, so it can only ever contain a
++    # SUBSET of those 5 colours. Plans that lack a region class (e.g. no corridor or
++    # no balcony) legitimately produce <5 colours and previously crashed here (~36%
++    # of MSD). We now require the colours to be a subset of the expected palette
++    # (absent classes -> empty ROIs, handled naturally below) and still reject any
++    # genuinely off-palette image loudly.
+     unique_colors = np.unique(image.reshape(-1, image.shape[2]), axis=0)
+-    if len(unique_colors) != 5:
+-        raise ValueError(f"The image must contain exactly 5 unique colors, but it has {len(unique_colors)}.")
++    expected_palette = {
++        (255, 204, 102),  # room
++        (255, 102, 204),  # outdoor
++        (178, 255, 102),  # corridor
++        (255, 255, 255),  # unmarked
++        (0, 0, 0),        # wall
++    }
++    off_palette = [tuple(int(c) for c in col) for col in unique_colors
++                   if tuple(int(c) for c in col) not in expected_palette]
++    if off_palette:
++        raise ValueError(
++            f"The segmented map must only contain colours from the 5-colour palette "
++            f"{sorted(expected_palette)}, but found off-palette colours {off_palette}."
++        )
+ 
+     # Copy the image for annotations
+     doors_image = image.copy()
