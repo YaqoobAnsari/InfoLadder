@@ -292,3 +292,38 @@ MSD remains the accuracy-validation corpus (it has room ground truth; ArchCAD
 does not — its door/count QA pairs give weak checks only).
 **Consequences.** Institutional regime (S4) gets volume with trustworthy T2; the
 door-tier story on ArchCAD is independent of the D-016 retrain.
+
+## 2026-07-21 — D-018: Audit adoption — evaluation additions, target verdicts, claim rewording
+
+**Context.** 20-agent audit workflow (docs/audits/project_audit_2026-07-16.md), all
+major claims adversarially verified. Supervisor concerns (metrics breadth; thermal
+inferability from 2D) addressed with evidence.
+**Adopted (executable):**
+1. Evaluation additions (3): conditional V-information for tier increments (already
+   implemented); pointwise V-information + Data-Checklist-style artifact audit;
+   loss-data-curve summaries from existing prequential-MDL blocks. Rejected with
+   reasons in audit §3: PID, GIB, neural MI, effective information, intrinsic
+   dimension, LEACE.
+2. Target verdicts: Y_pde KEEP reframed as analytic geometric functional (exact by
+   construction on 2D geometry); Y_zone KEEP with ASHRAE plan-level grounding +
+   disclosed archetype assumptions; Y_rank KEEP-DEMOTED (renamed away from
+   'temperature prediction'); Y_egress PROMOTED to co-headline (2D-native). Paper
+   gains a '2D validity envelope' subsection (stack effect, solar orientation,
+   inter-floor transfer excluded honestly).
+3. Claim rewording: novelty = the PROTOCOL (nested refinement + cost axis +
+   capacity sweep + calibrated controls), never 'first to study representation
+   effects on floorplans' (2026 wave: FloorplanQA/ICML26, FMLM/CVPR26 etc.).
+4. Related-work additions: Clio (arXiv 2404.13696, IB scene-graph granularity —
+   closest conceptual relative, previously uncited); Almudevar & Ortega 2601.21568
+   (V-info for learned-representation comparison + capacity-relativity theorem);
+   annotation-cost ROI line. Citation fixes: Data Checklist = COLM 2024;
+   FloorplanQA cite the v4/ICML-2026 version.
+5. Methodological guard: free-structure confound (T2/T5 topology changes shift
+   commute time / effective resistance) requires free-structure controls
+   (virtual-node/Louvain vs manual T5; untyped vs typed added nodes) + per-tier
+   resistance deltas + MLP-ablation probe — grid design must include them
+   (scale = pending user decision).
+6. Monitors: arXiv 2605.05476 revisions; new input-side citations of Xu 2020;
+   FINAL novelty sweep late August 2026 (pre-submission).
+**Pending user decisions:** grid growth for free-structure controls (~+30% cells);
+space-syntax fifth target; Bayes-error as contingency vs main-grid.
