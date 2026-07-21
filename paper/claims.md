@@ -41,3 +41,18 @@ changes.
 - Scoping statement: extractability, not usage (plan §8).
 - Negative/flat results published with equal prominence (plan §12).
 - All raw grids + toolkit released (plan §9); genre = findings/methodology (plan §11).
+
+## Related-work register updates (audit 2026-07-16; D-018)
+
+| Work | Role | Differentiation (verified) |
+|---|---|---|
+| Clio (arXiv 2404.13696, RSS'24) | closest conceptual relative — ADD | IB-based task-conditioned scene-graph granularity COMPRESSION online; ours = offline MEASUREMENT over a fixed nested cost-priced ladder with capacity sweeps + calibration |
+| Almudévar & Ortega (arXiv 2601.21568) | V-info representation comparison — ADD | learned hidden-layer activations, not input tiers; cite their capacity-relativity theorem next to our V0–V6 sweep |
+| FloorplanQA v4 (ICML 2026 poster) | in-domain format comparison — UPDATE CITE | prompting-accuracy over formats; no nesting/cost/probing; cite v4 not the 2025 preprint |
+| KG-construction benchmark (arXiv 2605.05476) | construction-matters relative — MONITOR | accuracy-only, unordered variants, no cost axis; under SWJ review, expansion planned — recheck late Aug |
+| Annotation-cost ROI line (2108.09913, 2209.15314, TMLR'25 2502.06209) | cost-framing precedent — ADD | per-sample label cost vs accuracy; never per-representation-tier cost vs information |
+| Data Checklist | venue CORRECTION | COLM 2024 (not ACL) |
+
+**Claim-wording rule (D-018):** novelty is the PROTOCOL (nested refinement + cost
+axis + capacity sweep + calibrated controls) — never "first to study representation
+effects on floorplans" (dead since the 2026 wave).
