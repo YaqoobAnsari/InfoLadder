@@ -25,9 +25,16 @@ N=${1:-200}
 export OMP_NUM_THREADS=8
 echo "NODE: $(hostname)  N=$N  @ $(date -Is)"
 
-# 1. render N plans (arc; records world->px transform + remap table)
+# 1. render N plans (arc; records world->px transform + remap table).
+# Renders are deterministic (seeded per plan) — skip if already complete so
+# RESUBMISSIONS spend walltime on Tesseract, not re-rendering.
 cd "$REPO"
-$PY scripts/render_msd_rasters.py -n "$N" --door-style arc --no-contact --out "$RENDER_DIR"
+N_PNG=$(ls "$RENDER_DIR"/*.png 2>/dev/null | grep -vc contact_sheet || echo 0)
+if [ "$N_PNG" -lt "$N" ]; then
+  $PY scripts/render_msd_rasters.py -n "$N" --door-style arc --no-contact --out "$RENDER_DIR"
+else
+  echo "renders already complete ($N_PNG >= $N) — skipping render step"
+fi
 
 # 2+3. per plan: copy into Input_Images, run Tesseract (skip if already done)
 cd "$TESS"
